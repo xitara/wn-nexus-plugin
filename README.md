@@ -86,7 +86,7 @@ public function registerNavigation()
     }
 
     return [
-        '[VENDOR-SLUG]' => [
+        '[PLUGIN-SLUG]' => [
             'label' => $label,
             'url' => Backend::url('[VENDOR-SLUG]/[PLUGIN-SLUG]/[CONTROLLER-SLUG]'),
             'icon' => 'icon-leaf',
