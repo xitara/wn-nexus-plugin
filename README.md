@@ -86,7 +86,7 @@ public function registerNavigation()
     }
 
     return [
-        '[VENDOR-SLUG]' => [
+        '[PLUGIN-SLUG]' => [
             'label' => $label,
             'url' => Backend::url('[VENDOR-SLUG]/[PLUGIN-SLUG]/[CONTROLLER-SLUG]'),
             'icon' => 'icon-leaf',
@@ -112,7 +112,7 @@ public static function injectSideMenu()
                 'group' => '[VENDOR-SLUG].[PLUGIN-SLUG]::lang.submenu.label',
                 'level' => 1, // optional, default is level 0. adds css-class level-X to li
             ],
-            'order' => Nexus::getMenuOrder('[VENDOR-SLUG].[PLUGIN-SLUG]') + $i++,
+            'order' => \Xitara\Nexus\Plugin::getMenuOrder('[VENDOR-SLUG].[PLUGIN-SLUG]') + $i++,
         ],
         ...
     ];
