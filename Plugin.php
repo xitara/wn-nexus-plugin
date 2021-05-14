@@ -5,10 +5,12 @@ use Backend;
 use BackendAuth;
 use BackendMenu;
 use Backend\Controllers\Users;
+use Backend\Models\Preference;
 use Backend\Models\User;
 use Backend\Models\UserRole;
 use Config;
 use Event;
+use File;
 use Redirect;
 use Str;
 use System\Classes\PluginBase;
@@ -17,6 +19,7 @@ use Xitara\Nexus\Classes\TwigFilter;
 use Xitara\Nexus\Models\CustomMenu;
 use Xitara\Nexus\Models\Menu;
 use Xitara\Nexus\Models\Settings as NexusSettings;
+use Yaml;
 
 class Plugin extends PluginBase
 {
@@ -177,6 +180,11 @@ class Plugin extends PluginBase
             $form->removeField('permissions');
             $form->removeField('groups');
         });
+
+        /**
+         * add timezone dropdown to translate-plugin
+         */
+        $this->bootTranslateExtend();
     }
 
     public function registerSettings()
@@ -348,13 +356,9 @@ class Plugin extends PluginBase
 
             if (method_exists($namespace, 'injectSideMenu')) {
                 $inject = $namespace::injectSideMenu();
-                // var_dump($namespace);
-
                 $items = array_merge($items, $inject);
             }
         }
-        // var_dump($items);
-
         Event::listen('backend.menu.extendItems', function ($manager) use ($owner, $code, $items) {
             $manager->addSideMenuItems($owner, $code, $items);
         });
@@ -430,42 +434,102 @@ class Plugin extends PluginBase
 
     public function registerComponents()
     {
-        return [
-            'Xitara\Nexus\Components\FontAwsome' => 'fontAwsome',
-        ];
+        if (NexusSettings::get('is_twig_filters')) {
+            return [
+                'Xitara\Nexus\Components\FontAwsome' => 'fontAwsome',
+            ];
+        }
     }
 
     public function registerMarkupTags()
     {
-        $twigfilter = new TwigFilter;
-
-        $filters = [];
-        $functions = [];
-
         if (NexusSettings::get('is_twig_filters')) {
-            $filters = [
-                'phone_link' => [$twigfilter, 'filterPhoneLink'],
-                'email_link' => [$twigfilter, 'filterEmailLink'],
-                'mediadata' => [$twigfilter, 'filterMediaData'],
-                'filesize' => [$twigfilter, 'filterFileSize'],
-                'regex_replace' => [$twigfilter, 'filterRegexReplace'],
-                'slug' => 'str_slug',
-                'strip_html' => [$twigfilter, 'filterStripHtml'],
-                'truncate_html' => [$twigfilter, 'filterTruncateHtml'],
-                'inject' => [$twigfilter, 'filterInject'],
-                'image_text' => [$twigfilter, 'filterAddImageText'],
-            ];
-
-            $functions = [
-                'uid' => [$twigfilter, 'functionGenerateUid'],
-            ];
+            $filter = new TwigFilter;
+            return $filter->registerMarkupTags();
         }
 
-        $filters['fa'] = [$twigfilter, 'filterFontAwesome'];
-
         return [
-            'filters' => $filters,
-            'functions' => $functions,
+            'filters' => [(new TwigFilter), 'filterFontAwesome'],
         ];
+    }
+
+    /**
+     * Extend translate plugin
+     */
+    private function bootTranslateExtend()
+    {
+        if (class_exists("\RainLab\Translate\Models\Locale")) {
+            \RainLab\Translate\Models\Locale::extend(function ($model) {
+                $model->addFillable([
+                    'nexus_timezone',
+                ]);
+            });
+
+            /**
+             * add dropdown
+             */
+            \Rainlab\Translate\Controllers\Locales::extendFormFields(function ($widget) {
+                if (!$widget->model instanceof \RainLab\Translate\Models\Locale) {
+                    return;
+                }
+
+                if ($widget->isNested) {
+                    return;
+                }
+
+                $configFile = __DIR__ . '/config/timezone.yaml';
+                $config = Yaml::parse(File::get($configFile));
+                $widget->addFields($config['fields']);
+            });
+
+            /**
+             * add dropdown options
+             */
+            \Rainlab\Translate\Models\Locale::extend(function ($model) {
+                $model->addDynamicMethod('getNexusTimezoneOptions', function () {
+                    $timezones = (new Preference)->getTimezoneOptions();
+                    array_unshift($timezones, e(trans('xitara.nexus::settings.no_timezone')));
+
+                    return $timezones;
+                });
+            });
+
+            /**
+             * set timezone to null if option is 0 (no timezone)
+             */
+            \Rainlab\Translate\Models\Locale::extend(function ($model) {
+                $model->bindEvent('model.beforeSave', function () use ($model) {
+                    \Log::debug($model->nexus_timezone);
+
+                    if ($model->nexus_timezone == '0') {
+                        $model->nexus_timezone = null;
+                    }
+                });
+            });
+        }
+    }
+
+    public static function getTimezone($localecode = null): string
+    {
+        return self::timezone($localecode);
+    }
+
+    private static function timezone($localecode): string
+    {
+        if ($localecode === null) {
+            $localecode = \RainLab\Translate\Classes\Translator::instance()->getLocale();
+        }
+
+        $locale = \RainLab\Translate\Models\Locale::findByCode($localecode);
+        return $locale->nexus_timezone ?? Config::get('app.timezone');
+    }
+
+    public static function Slug($title, $separator = '-', $language = null)
+    {
+        if ($language === null) {
+            $language = \Config::get('app.locale');
+        }
+
+        return \Str::slug($title, $separator, $language);
     }
 }

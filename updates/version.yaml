@@ -13,3 +13,6 @@
     - Add font awesome free
     - Cleanup some code
 2.1.1: Add first version of darkmode (static, no switch)
+2.1.2:
+    - Add timezone dropdown to translate plugin
+    - extend_winter_locale_with_timezone.php
