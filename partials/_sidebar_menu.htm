@@ -27,12 +27,23 @@
             $item->group = e(trans('xitara.' . $sub[0] . '::lang.submenu.label'));
         }
 
-        foreach ($item->permissions as $permission) {
-            if ($this->user->hasAccess($permission)) {
-                $categories[$item->group][$sideItemCode] = $item;
+        /**
+         * if permissions are given, show item only on have access
+         */
+        if (!empty($item->permissions)) {
+            foreach ($item->permissions as $permission) {
+                if ($this->user->hasAccess($permission)) {
+                    $categories[$item->group][$sideItemCode] = $item;
+                }
             }
+        } else {
+            /**
+             * if no permissions are given, show item to everyone
+             */
+            $categories[$item->group][$sideItemCode] = $item;
         }
     }
+    // exit;
 ?>
     <ul class="top-level">
     <?php foreach ($categories as $category => $items):

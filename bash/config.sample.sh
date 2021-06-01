@@ -10,23 +10,24 @@ STORAGE=(
     config
     console
     controllers
+    factories
     lang
     models
     partials
+    plugin.yaml
     reportwidgets
     updates
     vendor
-    plugin.yaml
 
+    *manifest.json*
     content
+    favicon.ico*
     layouts
     meta
     pages
+    robots.txt
     theme.yaml
     version.yaml
-    favicon.ico*
-    robots.txt
-    *manifest.json*
 )
 
 # filename. default name from package.json example with jq (linux)
