@@ -5,4 +5,5 @@ return [
     'dashboard' => 'Dashboard',
     'menu' => 'Menu-Sortierung',
     'custommenus' => 'Benutzerdefinierte Menus',
+    'twig_filter' => 'Zusätzliche Twig-Filter aktivieren/deaktivieren',
 ];

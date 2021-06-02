@@ -245,6 +245,10 @@ class Plugin extends PluginBase
                 'tab' => 'Xitara Nexus',
                 'label' => 'xitara.nexus::permissions.custommenus',
             ],
+            'xitara.nexus.twig_filter' => [
+                'tab' => 'Xitara Nexus',
+                'label' => 'xitara.nexus::permissions.twig_filter',
+            ],
         ];
     }
 

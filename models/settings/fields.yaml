@@ -20,6 +20,7 @@ fields:
         span: storm
         cssClass: col-md-3
         comment: xitara.nexus::settings.is_twig_filters_comment
+        permissions: xitara.nexus.twig_filter
     menu_icon_uploaded:
         label: xitara.nexus::settings.menu_icon
         type: fileupload
