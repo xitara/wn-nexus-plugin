@@ -473,8 +473,8 @@ class Plugin extends PluginBase
      */
     private function bootTranslateExtend()
     {
-        if (class_exists("\RainLab\Translate\Models\Locale")) {
-            \RainLab\Translate\Models\Locale::extend(function ($model) {
+        if (class_exists("\Winter\Translate\Models\Locale")) {
+            \Winter\Translate\Models\Locale::extend(function ($model) {
                 $model->addFillable([
                     'nexus_timezone',
                 ]);
@@ -483,8 +483,8 @@ class Plugin extends PluginBase
             /**
              * add dropdown
              */
-            \Rainlab\Translate\Controllers\Locales::extendFormFields(function ($widget) {
-                if (!$widget->model instanceof \RainLab\Translate\Models\Locale) {
+            \Winter\Translate\Controllers\Locales::extendFormFields(function ($widget) {
+                if (!$widget->model instanceof \Winter\Translate\Models\Locale) {
                     return;
                 }
 
@@ -500,7 +500,7 @@ class Plugin extends PluginBase
             /**
              * add dropdown options
              */
-            \Rainlab\Translate\Models\Locale::extend(function ($model) {
+            \Winter\Translate\Models\Locale::extend(function ($model) {
                 $model->addDynamicMethod('getNexusTimezoneOptions', function () {
                     $timezones = (new Preference)->getTimezoneOptions();
                     array_unshift($timezones, e(trans('xitara.nexus::settings.no_timezone')));
@@ -512,7 +512,7 @@ class Plugin extends PluginBase
             /**
              * set timezone to null if option is 0 (no timezone)
              */
-            \Rainlab\Translate\Models\Locale::extend(function ($model) {
+            \Winter\Translate\Models\Locale::extend(function ($model) {
                 $model->bindEvent('model.beforeSave', function () use ($model) {
                     \Log::debug($model->nexus_timezone);
 
@@ -532,10 +532,10 @@ class Plugin extends PluginBase
     private static function timezone($localecode): string
     {
         if ($localecode === null) {
-            $localecode = \RainLab\Translate\Classes\Translator::instance()->getLocale();
+            $localecode = \Winter\Translate\Classes\Translator::instance()->getLocale();
         }
 
-        $locale = \RainLab\Translate\Models\Locale::findByCode($localecode);
+        $locale = \Winter\Translate\Models\Locale::findByCode($localecode);
         return $locale->nexus_timezone ?? Config::get('app.timezone');
     }
 

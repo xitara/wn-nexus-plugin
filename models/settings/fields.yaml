@@ -1,42 +1,57 @@
-fields:
-    main_menu:
-        label: xitara.nexus::settings.main_menu
-        type: section
-        comment: xitara.nexus::settings.main_menu_comment
-    menu_text:
-        label: xitara.nexus::settings.menu_text
-        type: text
-        span: left
-        comment: xitara.nexus::settings.menu_text_comment
-    is_compact_display:
-        label: xitara.nexus::settings.is_compact_display
-        type: switch
-        span: storm
-        cssClass: col-md-3
-        comment: xitara.nexus::settings.is_compact_display_comment
-    is_twig_filters:
-        label: xitara.nexus::settings.is_twig_filters
-        type: switch
-        span: storm
-        cssClass: col-md-3
-        comment: xitara.nexus::settings.is_twig_filters_comment
-        permissions: xitara.nexus.twig_filter
-    menu_icon_uploaded:
-        label: xitara.nexus::settings.menu_icon
-        type: fileupload
-        mode: image
-        span: left
-        comment: xitara.nexus::settings.menu_icon_comment
-    menu_icon_text:
-        label: xitara.nexus::settings.menu_icon_text
-        type: text
-        span: right
-        comment: xitara.nexus::settings.menu_icon_text_comment
-        commentHtml: true
-    dashboard_text:
-        label: xitara.nexus::settings.dashboard_text
-        type: richeditor
-        span: full
-        size: huge
-        comment: xitara.nexus::settings.dashboard_text_comment
-        commentHtml: true
+tabs:
+    fields:
+        # main_menu:
+        #     label: xitara.nexus::settings.main_menu
+        #     tab: xitara.nexus::settings.tab.menu
+        #     type: section
+        #     comment: xitara.nexus::settings.main_menu_comment
+        menu_text:
+            label: xitara.nexus::settings.menu_text
+            tab: xitara.nexus::settings.tab.menu
+            type: text
+            span: left
+            comment: xitara.nexus::settings.menu_text_comment
+        is_compact_display:
+            label: xitara.nexus::settings.is_compact_display
+            tab: xitara.nexus::settings.tab.menu
+            type: switch
+            span: storm
+            cssClass: col-md-3
+            comment: xitara.nexus::settings.is_compact_display_comment
+        is_twig_filters:
+            label: xitara.nexus::settings.is_twig_filters
+            tab: xitara.nexus::settings.tab.menu
+            type: switch
+            span: storm
+            cssClass: col-md-3
+            comment: xitara.nexus::settings.is_twig_filters_comment
+            permissions: xitara.nexus.twig_filter
+        menu_icon_uploaded:
+            label: xitara.nexus::settings.menu_icon
+            tab: xitara.nexus::settings.tab.menu
+            type: fileupload
+            mode: image
+            span: left
+            comment: xitara.nexus::settings.menu_icon_comment
+        menu_icon_text:
+            label: xitara.nexus::settings.menu_icon_text
+            tab: xitara.nexus::settings.tab.menu
+            type: text
+            span: right
+            comment: xitara.nexus::settings.menu_icon_text_comment
+            commentHtml: true
+        dashboard_text:
+            label: xitara.nexus::settings.dashboard_text
+            tab: xitara.nexus::settings.tab.dashboard
+            type: richeditor
+            span: full
+            size: giant
+            comment: xitara.nexus::settings.dashboard_text_comment
+            commentHtml: true
+
+        default_email:
+            label: xitara.nexus::settings.default_email
+            comment: xitara.nexus::settings.default_email_comment
+            tab: xitara.nexus::settings.tab.default
+            type: text
+            span: left

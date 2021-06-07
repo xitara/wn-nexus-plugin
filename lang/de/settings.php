@@ -1,7 +1,10 @@
 <?php
 return [
-    'main_menu' => 'Hauptmenü',
-    'main_menu_comment' => 'Einstellungen für das Hauptmenü',
+    'tab' => [
+        'default' => 'Sonstiges',
+        'menu' => 'Menüeinstellungen',
+        'dashboard' => 'Dashboard',
+    ],
     'menu_text' => 'Menütext',
     'menu_text_comment' => 'Text im Hauptmenü. Sollte nicht länger als 20 Zeichen sein',
     'is_compact_display' => 'Kompakte Anzeige',
@@ -19,4 +22,6 @@ return [
         'comment' => 'Bei "Systemeinstellung verwenden" wird der Wert aus config/app.php -> timezone verwendet',
     ],
     'no_timezone' => '--- Systemeinstellung verwenden ---',
+    'default_email' => 'Standard-Mailempfänger',
+    'default_email_comment' => 'Die E-Mail Adresse, die als Empfänger für automatische Mails fungiert, z.B. für Statusmeldungen etc.',
 ];

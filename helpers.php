@@ -1,6 +1,6 @@
 <?php
 
-use \October\Rain\Support\Facades\Config;
+use \Winter\Storm\Support\Facades\Config;
 
 if (!function_exists('plugins_url')) {
     function plugins_url($path = '')

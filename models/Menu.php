@@ -7,8 +7,8 @@ use Model;
  */
 class Menu extends Model
 {
-    use \October\Rain\Database\Traits\Validation;
-    use \October\Rain\Database\Traits\Sortable;
+    use \Winter\Storm\Database\Traits\Validation;
+    use \Winter\Storm\Database\Traits\Sortable;
 
     /**
      * @var string The database table used by the model.
