@@ -55,3 +55,9 @@ tabs:
             tab: xitara.nexus::settings.tab.default
             type: text
             span: left
+        default_email_name:
+            label: xitara.nexus::settings.default_email_name
+            # comment: xitara.nexus::settings.default_email_name_comment
+            tab: xitara.nexus::settings.tab.default
+            type: text
+            span: right

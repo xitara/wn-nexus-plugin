@@ -23,5 +23,6 @@ return [
     ],
     'no_timezone' => '--- Systemeinstellung verwenden ---',
     'default_email' => 'Standard-Mailempfänger',
-    'default_email_comment' => 'Die E-Mail Adresse, die als Empfänger für automatische Mails fungiert, z.B. für Statusmeldungen etc.',
+    'default_email_comment' => 'Die E-Mail Adresse, die als Empfänger für automatische Mails fungiert, z.B. für Statusmeldungen etc. Wenn nicht angeben, wird die Mailadresse aus config/mail.php ($from) benutzt',
+    'default_email_name' => 'Angezeigter Name des Standard-Mailempfänger (optional)',
 ];
