@@ -1,0 +1,6 @@
+fields:
+    nexus_timezone:
+        label: xitara.nexus::settings.timezone.label
+        comment: xitara.nexus::settings.timezone.comment
+        type: dropdown
+        span: right

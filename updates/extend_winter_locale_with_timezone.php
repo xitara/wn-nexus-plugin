@@ -1,7 +1,7 @@
 <?php namespace Xitara\Nexus\Updates;
 
-use October\Rain\Database\Updates\Migration;
 use Schema;
+use Winter\Storm\Database\Updates\Migration;
 
 class ExtendWinterLocalesWithTimezone extends Migration
 {

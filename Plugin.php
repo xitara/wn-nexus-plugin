@@ -58,20 +58,31 @@ class Plugin extends PluginBase
 
     public function boot()
     {
+        /**
+         * include helpers
+         */
+        include_once dirname(__FILE__) . '/' . 'helpers.php';
+
         // Check if we are currently in backend module.
         if (!App::runningInBackend()) {
             return;
         }
 
         /**
+         * remove gravatar call
+         */
+        \Backend\Models\User::extend(function ($model) {
+            $model->bindEvent('model.afterFetch', function () use ($model) {
+                $file = new \System\Models\File;
+                $path = plugins_path('xitara/nexus/assets/images/avatar.png');
+                $model->avatar = $file->fromFile($path);
+            });
+        });
+
+        /**
          * set new backend-skin
          */
         Config::set('cms.backendSkin', 'Xitara\Nexus\Classes\BackendSkin');
-
-        /**
-         * include helpers
-         */
-        include_once dirname(__FILE__) . '/' . 'helpers.php';
 
         /**
          * add items to sidemenu
@@ -233,6 +244,10 @@ class Plugin extends PluginBase
             'xitara.nexus.custommenus' => [
                 'tab' => 'Xitara Nexus',
                 'label' => 'xitara.nexus::permissions.custommenus',
+            ],
+            'xitara.nexus.twig_filter' => [
+                'tab' => 'Xitara Nexus',
+                'label' => 'xitara.nexus::permissions.twig_filter',
             ],
         ];
     }
@@ -458,8 +473,8 @@ class Plugin extends PluginBase
      */
     private function bootTranslateExtend()
     {
-        if (class_exists("\RainLab\Translate\Models\Locale")) {
-            \RainLab\Translate\Models\Locale::extend(function ($model) {
+        if (class_exists("\Winter\Translate\Models\Locale")) {
+            \Winter\Translate\Models\Locale::extend(function ($model) {
                 $model->addFillable([
                     'nexus_timezone',
                 ]);
@@ -468,8 +483,8 @@ class Plugin extends PluginBase
             /**
              * add dropdown
              */
-            \Rainlab\Translate\Controllers\Locales::extendFormFields(function ($widget) {
-                if (!$widget->model instanceof \RainLab\Translate\Models\Locale) {
+            \Winter\Translate\Controllers\Locales::extendFormFields(function ($widget) {
+                if (!$widget->model instanceof \Winter\Translate\Models\Locale) {
                     return;
                 }
 
@@ -485,7 +500,7 @@ class Plugin extends PluginBase
             /**
              * add dropdown options
              */
-            \Rainlab\Translate\Models\Locale::extend(function ($model) {
+            \Winter\Translate\Models\Locale::extend(function ($model) {
                 $model->addDynamicMethod('getNexusTimezoneOptions', function () {
                     $timezones = (new Preference)->getTimezoneOptions();
                     array_unshift($timezones, e(trans('xitara.nexus::settings.no_timezone')));
@@ -497,7 +512,7 @@ class Plugin extends PluginBase
             /**
              * set timezone to null if option is 0 (no timezone)
              */
-            \Rainlab\Translate\Models\Locale::extend(function ($model) {
+            \Winter\Translate\Models\Locale::extend(function ($model) {
                 $model->bindEvent('model.beforeSave', function () use ($model) {
                     \Log::debug($model->nexus_timezone);
 
@@ -517,10 +532,10 @@ class Plugin extends PluginBase
     private static function timezone($localecode): string
     {
         if ($localecode === null) {
-            $localecode = \RainLab\Translate\Classes\Translator::instance()->getLocale();
+            $localecode = \Winter\Translate\Classes\Translator::instance()->getLocale();
         }
 
-        $locale = \RainLab\Translate\Models\Locale::findByCode($localecode);
+        $locale = \Winter\Translate\Models\Locale::findByCode($localecode);
         return $locale->nexus_timezone ?? Config::get('app.timezone');
     }
 

@@ -16,3 +16,5 @@
 2.1.2:
     - Add timezone dropdown to translate plugin
     - extend_winter_locale_with_timezone.php
+2.1.3: Merge oc-version into wn-version
+2.1.4: Full migration to winter-namespace
