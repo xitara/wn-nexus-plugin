@@ -5,9 +5,9 @@ use Cms\Classes\Theme;
 use Config;
 use File;
 use Html;
-use Kuse\Core\Plugin as Core;
 use League\Flysystem\FileNotFoundException;
 use Storage;
+use Xitara\Nexus\Plugin as Nexus;
 use Winter\Storm\Parse\Bracket;
 
 /**
@@ -201,12 +201,13 @@ class TwigFilter
                 $media = '/' . $media;
             }
             // Log::debug($media);
+            // \Log::debug(Storage::getMimetype($path . $media));
 
             if (strpos(Storage::getMimetype($path . $media), '/')) {
                 list($type, $art) = explode('/', Storage::getMimetype($path . $media));
             }
 
-            if ($art == 'svg+xml') {
+            if ($art ?? null == 'svg+xml') {
                 $art = 'svg';
             }
 
@@ -406,7 +407,7 @@ class TwigFilter
     }
 
     /**
-     * generates date and time with utcOffset  - |localize(this.param.utcOffset)
+     * |localize(this.param.utcOffset) - generates date and time with utcOffset
      * @param  array $data   datetime-string, utc-offset
      * @return string       patched timestamp
      */
@@ -420,7 +421,7 @@ class TwigFilter
 
             $timezone = Carbon::now($utcOffset)->tzName;
         } else {
-            $timezone = Core::getTimezone();
+            $timezone = Nexus::getTimezone();
         }
 
         \Log::debug($timezone);
@@ -437,6 +438,8 @@ class TwigFilter
      * @date    2021-02-14T00:22:14+01:00
      * @version 0.0.1
      * @since   0.0.1
+     * @param   string      $icon       icon name
+     * @param   string      $collection sprite collection like fa-brands or similar
      * @return  string      sprite with full path
      */
     public function filterFontAwesome($icon, $collection = null)
