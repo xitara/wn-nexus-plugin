@@ -20,6 +20,10 @@ class ExtendWinterLocalesWithTimezone extends Migration
 
     public function down()
     {
+        if (!Schema::hasColumns('winter_translate_locales', ['nexus_timezone'])) {
+            return;
+        }
+
         Schema::table('winter_translate_locales', function ($table) {
             $table->dropColumn('nexus_timezone');
         });
