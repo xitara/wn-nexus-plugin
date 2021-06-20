@@ -22,6 +22,6 @@ class CreateCustomMenusTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('xitara_nexus_linklists');
+        Schema::dropIfExists('xitara_nexus_custommenus');
     }
 }
