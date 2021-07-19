@@ -207,7 +207,7 @@ class TwigFilter
                 list($type, $art) = explode('/', Storage::getMimetype($path . $media));
             }
 
-            if ($art ?? null == 'svg+xml') {
+            if (($art ?? null) == 'svg+xml') {
                 $art = 'svg';
             }
 
