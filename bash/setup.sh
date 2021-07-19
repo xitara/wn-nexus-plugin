@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # copy config
 if [ ! -f "$(pwd)/bash/config.sh" ]; then

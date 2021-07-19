@@ -1,10 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # list of files and folder to pack/deploy. top: plugins, aber empty line, themes
 STORAGE=(
     *.php
     assets
     backend
+    behaviors
     classes
     components
     config
@@ -16,8 +17,10 @@ STORAGE=(
     partials
     plugin.yaml
     reportwidgets
+    traits
     updates
     vendor
+    views
 
     *manifest.json*
     content
