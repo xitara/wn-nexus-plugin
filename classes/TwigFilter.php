@@ -7,8 +7,8 @@ use File;
 use Html;
 use League\Flysystem\FileNotFoundException;
 use Storage;
-use Xitara\Nexus\Plugin as Nexus;
 use Winter\Storm\Parse\Bracket;
+use Xitara\Nexus\Plugin as Nexus;
 
 /**
  * additional twig filters
