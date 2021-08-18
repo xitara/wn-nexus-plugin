@@ -72,11 +72,11 @@ class Plugin extends PluginBase
          * remove gravatar call
          */
         \Backend\Models\User::extend(function ($model) {
-            $model->bindEvent('model.afterFetch', function () use ($model) {
-                $file = new \System\Models\File;
-                $path = plugins_path('xitara/nexus/assets/images/avatar.png');
-                $model->avatar = $file->fromFile($path);
-            });
+            // $model->bindEvent('model.afterFetch', function () use ($model) {
+            // $file = new \System\Models\File;
+            // $path = plugins_path('xitara/nexus/assets/images/avatar.png');
+            // $model->avatar = $file->fromFile($path);
+            // });
         });
 
         /**
