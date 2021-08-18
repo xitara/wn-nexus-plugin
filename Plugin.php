@@ -449,11 +449,11 @@ class Plugin extends PluginBase
 
     public function registerComponents()
     {
-        if (NexusSettings::get('is_twig_filters')) {
-            return [
-                'Xitara\Nexus\Components\FontAwsome' => 'fontAwsome',
-            ];
-        }
+        // if (NexusSettings::get('is_twig_filters')) {
+        return [
+            'Xitara\Nexus\Components\FontAwsome' => 'fontAwsome',
+        ];
+        // }
     }
 
     public function registerMarkupTags()
