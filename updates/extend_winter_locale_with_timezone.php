@@ -8,11 +8,17 @@ class ExtendWinterLocalesWithTimezone extends Migration
 
     public function up()
     {
-        if (Schema::hasColumns('winter_translate_locales', ['nexus_timezone'])) {
+        if (Schema::hasTable('winter_translate_locales')) {
+            $table = 'winter_translate_locales';
+        } else {
+            $table = 'rainlab_translate_locales';
+        }
+
+        if (Schema::hasColumns($table, ['nexus_timezone'])) {
             return;
         }
 
-        Schema::table('winter_translate_locales', function ($table) {
+        Schema::table($table, function ($table) {
             $table->string('nexus_timezone')->nullable();
         });
 
@@ -20,11 +26,17 @@ class ExtendWinterLocalesWithTimezone extends Migration
 
     public function down()
     {
-        if (!Schema::hasColumns('winter_translate_locales', ['nexus_timezone'])) {
+        if (Schema::hasTable('winter_translate_locales')) {
+            $table = 'winter_translate_locales';
+        } else {
+            $table = 'rainlab_translate_locales';
+        }
+
+        if (!Schema::hasColumns($table, ['nexus_timezone'])) {
             return;
         }
 
-        Schema::table('winter_translate_locales', function ($table) {
+        Schema::table($table, function ($table) {
             $table->dropColumn('nexus_timezone');
         });
     }

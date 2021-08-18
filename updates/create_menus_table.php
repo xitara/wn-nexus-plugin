@@ -1,14 +1,13 @@
 <?php namespace Xitara\Nexus\Updates;
 
 use Schema;
-use Winter\Storm\Database\Schema\Blueprint;
 use Winter\Storm\Database\Updates\Migration;
 
 class CreateMenusTable extends Migration
 {
     public function up()
     {
-        Schema::create('xitara_nexus_menus', function (Blueprint $table) {
+        Schema::create('xitara_nexus_menus', function ($table) {
             $table->engine = 'InnoDB';
             $table->string('code', 100)->nullable();
             $table->string('name', 100)->nullable();
