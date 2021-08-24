@@ -24,7 +24,7 @@ class TwigFilter
                 'mediadata' => [$this, 'filterMediaData'],
                 'filesize' => [$this, 'filterFileSize'],
                 'regex_replace' => [$this, 'filterRegexReplace'],
-                'slug' => 'str_slug',
+                'slug' => [$this, 'filterSlug'],
                 'strip_html' => [$this, 'filterStripHtml'],
                 'truncate_html' => [$this, 'filterTruncateHtml'],
                 'inject' => [$this, 'filterInject'],
@@ -252,6 +252,22 @@ class TwigFilter
     public function filterRegexReplace($subject, $pattern, $replacement): string
     {
         return preg_replace($pattern, $replacement, $subject);
+    }
+
+    /**
+     * slugfilter with auto language from config if not given |slug
+     * @param  string $text      text to slug
+     * @param  string $seperator seperator, space will be replaced, default "-"
+     * @param  string $lang      language for slug, default app.locale
+     * @return string            slugged text
+     */
+    public function filterSlug($text, $seperator = '-', $lang = null)
+    {
+        if ($lang === null) {
+            $lang = \Config::get('app.locale');
+        }
+
+        return \Xitara\Nexus\Plugin::slug($text, $seperator, $lang);
     }
 
     /**
