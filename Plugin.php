@@ -449,22 +449,21 @@ class Plugin extends PluginBase
 
     public function registerComponents()
     {
-        if (NexusSettings::get('is_twig_filters')) {
-            return [
-                'Xitara\Nexus\Components\FontAwsome' => 'fontAwsome',
-            ];
-        }
+        // if (NexusSettings::get('is_twig_filters')) {
+        return [
+            'Xitara\Nexus\Components\FontAwsome' => 'fontAwsome',
+        ];
+        // }
     }
 
     public function registerMarkupTags()
     {
         if (NexusSettings::get('is_twig_filters')) {
-            $filter = new TwigFilter;
-            return $filter->registerMarkupTags();
+            return (new TwigFilter)->registerMarkupTags();
         }
 
         return [
-            'filters' => [(new TwigFilter), 'filterFontAwesome'],
+            'filters' => [[(new TwigFilter), 'filterFontAwesome']],
         ];
     }
 
