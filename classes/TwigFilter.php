@@ -486,10 +486,16 @@ class TwigFilter
         $theme = Theme::getActiveTheme();
         $mediaUrl = str_replace(base_path() . '/', '', storage_path('app/media'));
 
-        return Bracket::parse($string, [
+        $string = Bracket::parse($string, [
             'theme' => Config::get('app.url') . $theme->getDirName(),
             'media' => Config::get('app.url') . $mediaUrl,
         ]);
+
+        if (str_starts_with($string, 'http') !== false) {
+            $string = 'url(' . $string . ')';
+        }
+
+        return $string;
     }
 
     /**
