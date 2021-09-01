@@ -35,4 +35,9 @@ return [
         'icon' => 'Icon',
         'icon_comment' => 'Entweder aus dem <a href="https://octobercms.com/docs/ui/icon" target="_blank">Iconpool</a> oder eine Datei aus dem Medienpool. Beides ist optional.',
     ],
+    'deleteAccount' => [
+        'label' => 'Account löschen',
+        'comment' => 'Der Account wird deaktiviert. Anschliessend ist kein Login mehr möglich. Nach 14 Tagen wird der Account unwiderruflich gelöscht.',
+        'confirm' => 'Wollen Sie ihren Account wirklich löschen?',
+    ],
 ];
