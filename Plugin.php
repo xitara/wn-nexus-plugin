@@ -173,13 +173,11 @@ class Plugin extends PluginBase
              */
             $controller->addDynamicMethod('onDeleteAccount', function () use ($controller) {
                 $user = BackendAuth::getUser();
-
                 Event::fire('backend.user.beforeDelete', [$user]);
-
-                // $user->delete();
-                // BackendAuth::logout($user);
+                $user->delete();
+                BackendAuth::logout($user);
                 Flash::success('Account erfolgreich deaktiviert');
-                // return Redirect::to('/backend');
+                return Redirect::to('/backend');
             });
         });
 
