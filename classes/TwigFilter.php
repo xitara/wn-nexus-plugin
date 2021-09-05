@@ -474,7 +474,7 @@ class TwigFilter
      * @date    2021-02-14T00:22:14+01:00
      * @version 0.0.1
      * @since   0.0.1
-     * @todo <mid>check for avtive URL with Briddle.MultiSite</mid>
+     * @todo <mid>check for active URL with Briddle.MultiSite</mid>
      *
      * @param  string $string string to parse
      * @param  array $vars optional vars
@@ -487,11 +487,12 @@ class TwigFilter
         $mediaUrl = str_replace(base_path() . '/', '', storage_path('app/media'));
 
         $string = Bracket::parse($string, [
-            'theme' => Config::get('app.url') . $theme->getDirName(),
-            'media' => Config::get('app.url') . $mediaUrl,
+            'theme' => Config::get('app.url') . '/' . $theme->getDirName(),
+            'media' => Config::get('app.url') . '/' . $mediaUrl,
+            'plugin' => Config::get('app.url') . Config::get('cms.pluginsPath'),
         ]);
 
-        if (str_starts_with($string, 'http') !== false) {
+        if (starts_with($string, 'http') !== false) {
             $string = 'url(' . $string . ')';
         }
 
