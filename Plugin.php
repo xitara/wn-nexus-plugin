@@ -11,6 +11,7 @@ use Backend\Models\UserRole;
 use Config;
 use Event;
 use File;
+use Flash;
 use Redirect;
 use Str;
 use System\Classes\PluginBase;
@@ -71,13 +72,13 @@ class Plugin extends PluginBase
         /**
          * remove gravatar call
          */
-        \Backend\Models\User::extend(function ($model) {
-            // $model->bindEvent('model.afterFetch', function () use ($model) {
-            // $file = new \System\Models\File;
-            // $path = plugins_path('xitara/nexus/assets/images/avatar.png');
-            // $model->avatar = $file->fromFile($path);
-            // });
-        });
+        // User::extend(function ($model) {
+        // $model->bindEvent('model.afterFetch', function () use ($model) {
+        // $file = new \System\Models\File;
+        // $path = plugins_path('xitara/nexus/assets/images/avatar.png');
+        // $model->avatar = $file->fromFile($path);
+        // });
+        // });
 
         /**
          * set new backend-skin
@@ -109,13 +110,13 @@ class Plugin extends PluginBase
          * remove original dashboard
          */
         Event::listen('backend.menu.extendItems', function ($navigationManager) {
-            $navigationManager->removeMainMenuItem('October.Backend', 'dashboard');
+            $navigationManager->removeMainMenuItem('Winter.Backend', 'dashboard');
         });
 
-        /**
-         * remove roles publisher and developer if user is not an superuser
-         */
         User::extend(function ($model) {
+            /**
+             * remove roles publisher and developer if user is not an superuser
+             */
             $model->addDynamicMethod('getMyRoleOptions', function ($model) {
                 $result = [];
 
@@ -166,10 +167,22 @@ class Plugin extends PluginBase
         Users::extend(function ($controller) {
             $controller->listConfig = $controller->makeConfig($controller->listConfig);
             $controller->listConfig->toolbar = array_merge($controller->listConfig->toolbar, ['buttons' => '$/xitara/nexus/partials/toolbar.users.htm']);
+
+            /**
+             * soft delete user account
+             */
+            $controller->addDynamicMethod('onDeleteAccount', function () use ($controller) {
+                $user = BackendAuth::getUser();
+                Event::fire('backend.user.beforeDelete', [$user]);
+                $user->delete();
+                BackendAuth::logout($user);
+                Flash::success('Account erfolgreich deaktiviert');
+                return Redirect::to('/backend');
+            });
         });
 
         /**
-         * remove groups and permission columns from non superuser
+         * remove groups and permission columns from non superuser in list
          */
         Users::extendListColumns(function ($list, $model) {
             if (BackendAuth::getUser()->isSuperUser()) {
@@ -181,7 +194,7 @@ class Plugin extends PluginBase
         });
 
         /**
-         * remove groups and permission tabs from non superuser
+         * remove groups and permission tabs from non superuser in form
          */
         Users::extendFormFields(function ($form, $model, $context) {
             if (BackendAuth::getUser()->isSuperUser()) {
@@ -190,6 +203,16 @@ class Plugin extends PluginBase
 
             $form->removeField('permissions');
             $form->removeField('groups');
+
+            $form->addTabFields([
+                'deleteAccount' => [
+                    'tab' => 'backend::lang.user.account',
+                    'label' => 'xitara.nexus::lang.deleteAccount.label',
+                    'comment' => 'xitara.nexus::lang.deleteAccount.comment',
+                    'type' => 'partial',
+                    'path' => '$/xitara/nexus/partials/_deleteaccount.htm',
+                ],
+            ]);
         });
 
         /**
