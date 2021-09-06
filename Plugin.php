@@ -190,7 +190,7 @@ class Plugin extends PluginBase
             }
 
             $list->removeColumn('permissions');
-            $list->removeColumn('groups');
+            // $list->removeColumn('groups');
         });
 
         /**
@@ -202,17 +202,19 @@ class Plugin extends PluginBase
             }
 
             $form->removeField('permissions');
-            $form->removeField('groups');
+            // $form->removeField('groups');
 
-            $form->addTabFields([
-                'deleteAccount' => [
-                    'tab' => 'backend::lang.user.account',
-                    'label' => 'xitara.nexus::lang.deleteAccount.label',
-                    'comment' => 'xitara.nexus::lang.deleteAccount.comment',
-                    'type' => 'partial',
-                    'path' => '$/xitara/nexus/partials/_deleteaccount.htm',
-                ],
-            ]);
+            if (\Request::segment(4) == 'myaccount') {
+                $form->addTabFields([
+                    'deleteAccount' => [
+                        'tab' => 'backend::lang.user.account',
+                        'label' => 'xitara.nexus::lang.deleteAccount.label',
+                        'comment' => 'xitara.nexus::lang.deleteAccount.comment',
+                        'type' => 'partial',
+                        'path' => '$/xitara/nexus/partials/_deleteaccount.htm',
+                    ],
+                ]);
+            }
         });
 
         /**
