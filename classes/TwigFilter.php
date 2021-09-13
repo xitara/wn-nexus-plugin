@@ -187,7 +187,8 @@ class TwigFilter
             'art' => 'none',
         ];
 
-        if ($media === null) {
+        // if ($media === null || !isset($media[0])) {
+        if ($media === null || $media == '') {
             return $empty;
         }
 
