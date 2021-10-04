@@ -2,6 +2,13 @@
 
 use \Winter\Storm\Support\Facades\Config;
 
+if (!function_exists('media_url')) {
+    function media_url($path = '')
+    {
+        return url(Config::get('cms.storage.media.path') . '/' . $path);
+    }
+}
+
 if (!function_exists('plugins_url')) {
     function plugins_url($path = '')
     {

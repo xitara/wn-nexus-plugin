@@ -3,9 +3,9 @@
     $sideMenuItems = BackendMenu::listSideMenuItems();
 
     if ($sideMenuItems):
-        $collapsedGroups = explode('|',
-        isset($_COOKIE['sidenav_treegroupStatus']) ? $_COOKIE['sidenav_treegroupStatus']
-            : null);
+        // $collapsedGroups = explode('|',
+        // isset($_COOKIE['sidenav_treegroupStatus']) ? $_COOKIE['sidenav_treegroupStatus']
+            // : null);
 
     $categories = [];
     foreach ($sideMenuItems as $sideItemCode => $item) {
@@ -47,15 +47,16 @@
 ?>
     <ul class="top-level">
     <?php foreach ($categories as $category => $items):
-            $collapsed = in_array($category, $collapsedGroups);
-            if (!isset($_COOKIE['sidenav_treegroupStatus'])) {
+            // $collapsed = in_array($category, $collapsedGroups);
+            // if (!isset($_COOKIE['sidenav_treegroupStatus'])) {
+            // if ($category == '') {
                 /**
                  * true -> collapsed per default
                  * false -> expanded per default
                  * @var boolean
                  */
                 $collapsed = true;
-            }
+            // }
     ?>
         <li data-group-code="<?= e($category); ?>"
             <?= $collapsed ? 'data-status="collapsed"' : null; ?>
