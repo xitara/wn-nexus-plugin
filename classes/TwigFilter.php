@@ -8,6 +8,7 @@ use Html;
 use League\Flysystem\FileNotFoundException;
 use Storage;
 use Winter\Storm\Parse\Bracket;
+use Winter\User\Models\User;
 use Xitara\Nexus\Plugin as Nexus;
 
 /**
@@ -18,25 +19,26 @@ class TwigFilter
     public function registerMarkupTags()
     {
         return [
-            'filters' => [
-                'phone_link' => [$this, 'filterPhoneLink'],
-                'email_link' => [$this, 'filterEmailLink'],
-                'mediadata' => [$this, 'filterMediaData'],
-                'filesize' => [$this, 'filterFileSize'],
+            'filters'   => [
+                'phone_link'    => [$this, 'filterPhoneLink'],
+                'email_link'    => [$this, 'filterEmailLink'],
+                'mediadata'     => [$this, 'filterMediaData'],
+                'filesize'      => [$this, 'filterFileSize'],
                 'regex_replace' => [$this, 'filterRegexReplace'],
-                'slug' => [$this, 'filterSlug'],
-                'strip_html' => [$this, 'filterStripHtml'],
+                'slug'          => [$this, 'filterSlug'],
+                'strip_html'    => [$this, 'filterStripHtml'],
                 'truncate_html' => [$this, 'filterTruncateHtml'],
-                'inject' => [$this, 'filterInject'],
-                'image_text' => [$this, 'filterAddImageText'],
-                'parentlink' => [$this, 'filterParentLink'],
-                'localize' => [$this, 'filterLocalize'],
-                'css_var' => [$this, 'filterCssVars'],
-                'storage' => [$this, 'filterStorageUrl'],
-                'fa' => [$this, 'filterFontAwesome'],
+                'inject'        => [$this, 'filterInject'],
+                'image_text'    => [$this, 'filterAddImageText'],
+                'parentlink'    => [$this, 'filterParentLink'],
+                'localize'      => [$this, 'filterLocalize'],
+                'css_var'       => [$this, 'filterCssVars'],
+                'storage'       => [$this, 'filterStorageUrl'],
+                'fa'            => [$this, 'filterFontAwesome'],
+                'username'      => [$this, 'filterGetUsernameFromId'],
             ],
             'functions' => [
-                'uid' => [$this, 'functionGenerateUid'],
+                'uid'    => [$this, 'functionGenerateUid'],
                 'config' => [$this, 'functionConfig'],
             ],
         ];
@@ -67,8 +69,8 @@ class TwigFilter
          * process options
          */
         $textBefore = $options['text_before'] ?? '';
-        $textAfter = $options['text_after'] ?? '';
-        $classes = $options['classes'] ?? null;
+        $textAfter  = $options['text_after'] ?? '';
+        $classes    = $options['classes'] ?? null;
         $hideNubmer = $options['hide_number'] ?? false;
 
         /**
@@ -117,17 +119,17 @@ class TwigFilter
          * remove subject and body from mail if given
          */
         $parts = explode('?', $text);
-        $mail = $parts[0];
+        $mail  = $parts[0];
         $query = isset($parts[1]) ? '?' . $parts[1] : '';
 
         /**
          * process options
          */
         $textBefore = $options['text_before'] ?? '';
-        $textAfter = $options['text_after'] ?? '';
-        $classes = $options['classes'] ?? null;
-        $hideMail = $options['hide_mail'] ?? false;
-        $image = $options['image'] ?? null;
+        $textAfter  = $options['text_after'] ?? '';
+        $classes    = $options['classes'] ?? null;
+        $hideMail   = $options['hide_mail'] ?? false;
+        $image      = $options['image'] ?? null;
 
         /**
          * generate link
@@ -181,10 +183,10 @@ class TwigFilter
     public function filterMediaData($media, $path = 'media'): array
     {
         $empty = [
-            'size' => 0,
+            'size'      => 0,
             'mime_type' => 'none/none',
-            'type' => 'none',
-            'art' => 'none',
+            'type'      => 'none',
+            'art'       => 'none',
         ];
 
         // if ($media === null || !isset($media[0])) {
@@ -213,10 +215,10 @@ class TwigFilter
             }
 
             $data = [
-                'size' => Storage::size($path . $media),
+                'size'      => Storage::size($path . $media),
                 'mime_type' => Storage::getMimetype($path . $media),
-                'type' => $type ?? null,
-                'art' => $art ?? null,
+                'type'      => $type ?? null,
+                'art'       => $art ?? null,
             ];
 
             return $data;
@@ -484,12 +486,12 @@ class TwigFilter
 
     public function filterCssVars($string, ...$vars)
     {
-        $theme = Theme::getActiveTheme();
+        $theme    = Theme::getActiveTheme();
         $mediaUrl = str_replace(base_path() . '/', '', storage_path('app/media'));
 
         $string = Bracket::parse($string, [
-            'theme' => Config::get('app.url') . '/' . $theme->getDirName(),
-            'media' => Config::get('app.url') . '/' . $mediaUrl,
+            'theme'  => Config::get('app.url') . '/' . $theme->getDirName(),
+            'media'  => Config::get('app.url') . '/' . $mediaUrl,
             'plugin' => Config::get('app.url') . Config::get('cms.pluginsPath'),
         ]);
 
@@ -515,9 +517,20 @@ class TwigFilter
     {
         // return storage_path($string);
 
-        $appPath = str_replace(base_path() . '/', '', app_path());
+        $appPath     = str_replace(base_path() . '/', '', app_path());
         $storagePath = str_replace(base_path() . '/', '', storage_path());
 
         return $storagePath . '/' . $appPath . '/' . $string;
+    }
+
+    public function filterGetUsernameFromId($userId)
+    {
+        $user = User::find($userId);
+
+        if ($user === null) {
+            return 'John Doe';
+        }
+
+        return $user->name . ' ' . $user->surname;
     }
 }
