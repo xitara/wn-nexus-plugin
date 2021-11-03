@@ -109,6 +109,7 @@
         ]
     },
     "dependencies": {
+        "@fortawesome/fontawesome-free": "^5.15.4",
         "@tailwindcss/ui": "^0.7.2",
         "alpinejs": "^3.4.2",
         "glightbox": "^3.1.0",
