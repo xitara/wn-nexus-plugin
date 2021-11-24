@@ -137,7 +137,7 @@ public function __construct()
 ### You must implement your own settings model in your plugin
 On top of `Plugin.php`:
 ```php
-use Xitara\Nexus\Models\Setting;
+use Xitara\Nexus\Models\Settings;
 ```
 
 and as registration method
@@ -145,7 +145,7 @@ and as registration method
 public function registerSettings()
 {
     if (($category = Settings::get('menu_text')) == '') {
-        $category = 'xitara.nexus::core.setting.name';
+        $category = 'xitara.nexus::core.settings.name';
     }
 
     return [
