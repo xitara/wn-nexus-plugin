@@ -30,6 +30,9 @@ tabs:
             label: xitara.nexus::settings.menu_icon
             tab: xitara.nexus::settings.tab.menu
             type: fileupload
+            fileTypes: png,bmp,jpg,gif,svg
+            # imageWidth: 200
+            # imageHeight: 200
             mode: image
             span: left
             comment: xitara.nexus::settings.menu_icon_comment
