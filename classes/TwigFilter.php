@@ -1,4 +1,5 @@
-<?php namespace Xitara\Nexus\Classes;
+<?php
+namespace Xitara\Nexus\Classes;
 
 use Carbon\Carbon;
 use Cms\Classes\Theme;
@@ -297,12 +298,28 @@ class TwigFilter
 
     /**
      * inject filecontent directly inside html. useful for svg or so - |inject
-     * @param  string $text filename relative to project root
+     * @param  string $path filename relative to project root
+     * @param  string $base theme, media or plugin
      * @return string       content of file
      */
-    public function filterInject($text): string
+    public function filterInject($path, $base = null): string
     {
-        $fileContent = File::get(base_path($text));
+        switch ($base) {
+            case 'theme':
+                $fileContent = File::get(themes_path($path));
+                break;
+            case 'media':
+                $fileContent = File::get(media_path($path));
+                break;
+            case 'plugin':
+                $fileContent = File::get(plugins_path($path));
+                break;
+            default:
+                $fileContent = File::get(base_path($path));
+                break;
+        }
+
+        // $fileContent = File::get(base_path($path));
         $fileContent = preg_replace('/<\?xml(.|\s)*?\?>/', '', $fileContent);
 
         return $fileContent;

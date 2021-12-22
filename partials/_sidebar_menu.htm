@@ -46,18 +46,9 @@
     // exit;
 ?>
     <ul class="top-level">
-    <?php foreach ($categories as $category => $items):
-            // $collapsed = in_array($category, $collapsedGroups);
-            // if (!isset($_COOKIE['sidenav_treegroupStatus'])) {
-            // if ($category == '') {
-                /**
-                 * true -> collapsed per default
-                 * false -> expanded per default
-                 * @var boolean
-                 */
-                $collapsed = true;
-            // }
-    ?>
+        <?php foreach ($categories as $category => $items):
+            $collapsed = true;
+        ?>
         <li data-group-code="<?= e($category); ?>"
             <?= $collapsed ? 'data-status="collapsed"' : null; ?>
         >

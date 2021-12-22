@@ -1,4 +1,5 @@
-<?php namespace Xitara\Nexus;
+<?php
+namespace Xitara\Nexus;
 
 use App;
 use Backend;
@@ -399,6 +400,7 @@ class Plugin extends PluginBase
                 $items  = array_merge($items, $inject);
             }
         }
+
         Event::listen('backend.menu.extendItems', function ($manager) use ($owner, $code, $items) {
             $manager->addSideMenuItems($owner, $code, $items);
         });

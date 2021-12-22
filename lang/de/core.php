@@ -23,6 +23,7 @@ return [
     'add_m'           => ':model hinzufügen',
     'address'         => 'Adresse',
     'address_2'       => 'Adresse 2',
+    'address_add'     => 'Adresse (Zusatz)',
     'all'             => 'Alle',
     'auto'            => 'Automatisch',
     'bottom'          => 'unten',
