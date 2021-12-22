@@ -306,7 +306,8 @@ class TwigFilter
     {
         switch ($base) {
             case 'theme':
-                $fileContent = File::get(themes_path($path));
+                $theme       = Theme::getActiveTheme();
+                $fileContent = File::get(themes_path($theme->getDirName() . '/' . $path));
                 break;
             case 'media':
                 $fileContent = File::get(media_path($path));
