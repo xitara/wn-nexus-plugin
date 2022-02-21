@@ -307,10 +307,10 @@ class TwigFilter
         switch ($base) {
             case 'theme':
                 $theme       = Theme::getActiveTheme();
-                $fileContent = File::get(themes_path($theme->getDirName() . '/' . $path));
+                $fileContent = File::get($theme->getDirName() . '/' . $path);
                 break;
             case 'media':
-                $fileContent = File::get(media_path($path));
+                $fileContent = File::get(base_path(media_path($path)));
                 break;
             case 'plugin':
                 $fileContent = File::get(plugins_path($path));
@@ -320,7 +320,6 @@ class TwigFilter
                 break;
         }
 
-        // $fileContent = File::get(base_path($path));
         $fileContent = preg_replace('/<\?xml(.|\s)*?\?>/', '', $fileContent);
 
         return $fileContent;
@@ -508,7 +507,7 @@ class TwigFilter
         $mediaUrl = str_replace(base_path() . '/', '', storage_path('app/media'));
 
         $string = Bracket::parse($string, [
-            'theme'  => Config::get('app.url') . '/' . $theme->getDirName(),
+            'theme'  => Config::get('app.url') . Config::get('cms.themesPath') . '/' . $theme->getDirName(),
             'media'  => Config::get('app.url') . '/' . $mediaUrl,
             'plugin' => Config::get('app.url') . Config::get('cms.pluginsPath'),
         ]);
