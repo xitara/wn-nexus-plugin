@@ -144,8 +144,12 @@ and as registration method
 ```php
 public function registerSettings()
 {
-    if (($category = Settings::get('menu_text')) == '') {
-        $category = 'xitara.nexus::core.settings.name';
+    $category = '[VENDOR-SLUG].[PLUGIN-SLUG]::lang.settings.label';
+    
+    if (PluginManager::instance()->exists('Xitara.Nexus') === true) {
+        if (($category = \Xitara\Nexus\Models\Settings::get('menu_text')) == '') {
+            $category = 'xitara.nexus::core.settings.name';
+        }
     }
 
     return [
