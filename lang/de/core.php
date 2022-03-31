@@ -42,7 +42,7 @@ return [
     'create_m'        => ':model anlegen',
     'created_at'      => 'Angelegt',
     'day_s'           => 'Tag(e)',
-    'delete_m'        => ':model löschen',
+    'delete_m'        => 'Selektierte :model löschen',
     'delete_selected' => 'Markierte löschen',
     'deleted_at'      => 'Gelöscht',
     'deleting'        => 'Löschen',
