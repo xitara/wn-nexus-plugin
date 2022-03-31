@@ -135,17 +135,17 @@ public function __construct()
 
 ## Register backend settings
 ### You must implement your own settings model in your plugin
-On top of `Plugin.php`:
-```php
-use Xitara\Nexus\Models\Settings;
-```
 
-and as registration method
+Register settings to Nexus category
 ```php
 public function registerSettings()
 {
-    if (($category = Settings::get('menu_text')) == '') {
-        $category = 'xitara.nexus::core.settings.name';
+    $category = '[VENDOR-SLUG].[PLUGIN-SLUG]::lang.settings.label';
+    
+    if (PluginManager::instance()->exists('Xitara.Nexus') === true) {
+        if (($category = \Xitara\Nexus\Models\Settings::get('menu_text')) == '') {
+            $category = 'xitara.nexus::core.settings.name';
+        }
     }
 
     return [
