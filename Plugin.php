@@ -166,8 +166,8 @@ class Plugin extends PluginBase
          * add new toolbor for disable group and permission tab for non superuser
          */
         Users::extend(function ($controller) {
-            $controller->listConfig          = $controller->makeConfig($controller->listConfig);
-            $controller->listConfig->toolbar = array_merge($controller->listConfig->toolbar, ['buttons' => '$/xitara/nexus/partials/toolbar.users.htm']);
+            // $controller->listConfig          = $controller->makeConfig($controller->listConfig);
+            // $controller->listConfig->toolbar = array_merge($controller->listConfig->toolbar, ['buttons' => '$/xitara/nexus/partials/toolbar.users.htm']);
 
             /**
              * soft delete user account
