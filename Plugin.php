@@ -56,6 +56,7 @@ class Plugin extends PluginBase
 
         $this->registerConsoleCommand('xitara.fakeblog', 'Xitara\Nexus\Console\FakeBlog');
         $this->registerConsoleCommand('xitara.fakeuser', 'Xitara\Nexus\Console\FakeUser');
+        $this->registerConsoleCommand('nexus.test', 'Xitara\Nexus\Console\Test');
     }
 
     public function boot()
