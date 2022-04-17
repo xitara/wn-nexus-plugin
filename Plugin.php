@@ -1,4 +1,5 @@
 <?php
+
 namespace Xitara\Nexus;
 
 use App;
@@ -173,8 +174,11 @@ class Plugin extends PluginBase
          * add new toolbor for disable group and permission tab for non superuser
          */
         Users::extend(function ($controller) {
-            $controller->listConfig          = $controller->makeConfig($controller->listConfig);
-            $controller->listConfig->toolbar = array_merge($controller->listConfig->toolbar, ['buttons' => '$/xitara/nexus/partials/toolbar.users.htm']);
+            // $controller->listConfig          = $controller->makeConfig($controller->listConfig);
+            // $controller->listConfig->toolbar =
+                // array_merge($controller->listConfig->toolbar, [
+                    // 'buttons' => '$/xitara/nexus/partials/toolbar.users.htm'
+                // ]);
 
             /**
              * soft delete user account
@@ -417,7 +421,7 @@ class Plugin extends PluginBase
      * @param String $code
      * @return mixed
      */
-    public static function getMenuOrder(String $code): int
+    public static function getMenuOrder(string $code): int
     {
         $item = Menu::find($code);
 
@@ -497,11 +501,11 @@ class Plugin extends PluginBase
     public function registerMarkupTags()
     {
         if (NexusSettings::get('is_twig_filters')) {
-            return (new TwigFilter)->registerMarkupTags();
+            return (new TwigFilter())->registerMarkupTags();
         }
 
         return [
-            'filters' => [[(new TwigFilter), 'filterFontAwesome']],
+            'filters' => [[(new TwigFilter()), 'filterFontAwesome']],
         ];
     }
 
@@ -539,7 +543,7 @@ class Plugin extends PluginBase
              */
             \Winter\Translate\Models\Locale::extend(function ($model) {
                 $model->addDynamicMethod('getNexusTimezoneOptions', function () {
-                    $timezones = (new Preference)->getTimezoneOptions();
+                    $timezones = (new Preference())->getTimezoneOptions();
                     array_unshift($timezones, e(trans('xitara.nexus::settings.no_timezone')));
 
                     return $timezones;
@@ -588,7 +592,7 @@ class Plugin extends PluginBase
      * @param $separator
      * @param $language
      */
-    public static function Slug($title, $separator = '-', $language = null)
+    public static function slug($title, $separator = '-', $language = null)
     {
         if ($language === null) {
             $language = \Config::get('app.locale');

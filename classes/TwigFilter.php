@@ -1,4 +1,5 @@
 <?php
+
 namespace Xitara\Nexus\Classes;
 
 use Carbon\Carbon;
@@ -34,7 +35,6 @@ class TwigFilter
                 'parentlink'    => [$this, 'filterParentLink'],
                 'localize'      => [$this, 'filterLocalize'],
                 'css_var'       => [$this, 'filterCssVars'],
-                'username'      => [$this, 'filterGetUsernameFromId'],
                 'storage'       => [$this, 'filterStoragePath'],
                 'plugin'        => [$this, 'filterPluginsPath'],
                 'fa'            => [$this, 'filterFontAwesome'],
@@ -155,11 +155,12 @@ class TwigFilter
 
         if ($image !== null) {
             if (is_array($image)) {
-                $link .= '<img src="' . $image['image'] . '" alt="' . $mail . '" width="' . $image['width'] . '" height="' . $image['height'] . '">';
+                $link .= '<img src="' . $image['image'] . '" alt="' . $mail;
+                $link .= '" width="' . $image['width'] . '" height="';
+                $link .= $image['height'] . '">';
             } else {
                 $link .= '<img src="' . $image . '" alt="' . $mail . '">';
             }
-
         }
 
         if ($hideMail === false) {
@@ -399,7 +400,8 @@ class TwigFilter
             $text = $options['default']['title'] ?? '';
         }
 
-        if (isset($image->title)
+        if (
+            isset($image->title)
             && $image->title !== null
             && $image->title != ''
             && ($text == '' || ($options['first'] ?? 'title') == 'title')
