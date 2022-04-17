@@ -1,4 +1,5 @@
-<?php namespace Xitara\Nexus;
+<?php
+namespace Xitara\Nexus;
 
 use App;
 use Backend;
@@ -58,6 +59,7 @@ class Plugin extends PluginBase
 
         $this->registerConsoleCommand('xitara.fakeblog', 'Xitara\Nexus\Console\FakeBlog');
         $this->registerConsoleCommand('xitara.fakeuser', 'Xitara\Nexus\Console\FakeUser');
+        $this->registerConsoleCommand('nexus.test', 'Xitara\Nexus\Console\Test');
     }
 
     /**
@@ -405,6 +407,7 @@ class Plugin extends PluginBase
                 $items  = array_merge($items, $inject);
             }
         }
+
         Event::listen('backend.menu.extendItems', function ($manager) use ($owner, $code, $items) {
             $manager->addSideMenuItems($owner, $code, $items);
         });

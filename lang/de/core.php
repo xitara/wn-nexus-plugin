@@ -5,9 +5,9 @@ return [
         'name' => 'Xitara',
         'home' => 'https://xitara.net',
     ],
-    'setting'         => [
-        'name'    => 'Xitara Nexus',
-        'setting' => 'Einstellungen',
+    'settings'        => [
+        'name'     => 'Xitara Nexus',
+        'settings' => 'Einstellungen',
     ],
     'submenu'         => [
         'title_template' => '%s - Xitara Nexus',
@@ -24,6 +24,7 @@ return [
     'add_m'           => ':model hinzufügen',
     'address'         => 'Adresse',
     'address_2'       => 'Adresse 2',
+    'address_add'     => 'Adresse (Zusatz)',
     'all'             => 'Alle',
     'auto'            => 'Automatisch',
     'bottom'          => 'unten',
@@ -42,7 +43,7 @@ return [
     'create_m'        => ':model anlegen',
     'created_at'      => 'Angelegt',
     'day_s'           => 'Tag(e)',
-    'delete_m'        => ':model löschen',
+    'delete_m'        => 'Selektierte :model löschen',
     'delete_selected' => 'Markierte löschen',
     'deleted_at'      => 'Gelöscht',
     'deleting'        => 'Löschen',

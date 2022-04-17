@@ -9,6 +9,7 @@ use Html;
 use League\Flysystem\FileNotFoundException;
 use Storage;
 use Winter\Storm\Parse\Bracket;
+use Winter\User\Models\User;
 use Xitara\Nexus\Plugin as Nexus;
 
 /**
@@ -33,6 +34,7 @@ class TwigFilter
                 'parentlink'    => [$this, 'filterParentLink'],
                 'localize'      => [$this, 'filterLocalize'],
                 'css_var'       => [$this, 'filterCssVars'],
+                'username'      => [$this, 'filterGetUsernameFromId'],
                 'storage'       => [$this, 'filterStoragePath'],
                 'plugin'        => [$this, 'filterPluginsPath'],
                 'fa'            => [$this, 'filterFontAwesome'],
@@ -297,12 +299,28 @@ class TwigFilter
 
     /**
      * inject filecontent directly inside html. useful for svg or so - |inject
-     * @param  string $text filename relative to project root
+     * @param  string $path filename relative to project root
+     * @param  string $base theme, media or plugin
      * @return string       content of file
      */
-    public function filterInject($text): string
+    public function filterInject($path, $base = null): string
     {
-        $fileContent = File::get(base_path($text));
+        switch ($base) {
+            case 'theme':
+                $theme       = Theme::getActiveTheme();
+                $fileContent = File::get($theme->getDirName() . '/' . $path);
+                break;
+            case 'media':
+                $fileContent = File::get(base_path(media_path($path)));
+                break;
+            case 'plugin':
+                $fileContent = File::get(plugins_path($path));
+                break;
+            default:
+                $fileContent = File::get(base_path($path));
+                break;
+        }
+
         $fileContent = preg_replace('/<\?xml(.|\s)*?\?>/', '', $fileContent);
 
         return $fileContent;
@@ -490,7 +508,7 @@ class TwigFilter
         $mediaUrl = str_replace(base_path() . '/', '', storage_path('app/media'));
 
         $string = Bracket::parse($string, [
-            'theme'  => Config::get('app.url') . '/' . $theme->getDirName(),
+            'theme'  => Config::get('app.url') . Config::get('cms.themesPath') . '/' . $theme->getDirName(),
             'media'  => Config::get('app.url') . '/' . $mediaUrl,
             'plugin' => Config::get('app.url') . Config::get('cms.pluginsPath'),
         ]);
