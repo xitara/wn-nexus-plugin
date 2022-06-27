@@ -42,6 +42,7 @@ class TwigFilter
             'functions' => [
                 'uid'    => [$this, 'functionGenerateUid'],
                 'config' => [$this, 'functionConfig'],
+                'd' => [$this, 'functionDump'],
             ],
         ];
     }
@@ -328,13 +329,27 @@ class TwigFilter
     }
 
     /**
-     * get data from config files - |config
+     * get data from config files - config()
      * @param  string $text config route like Config::get() -> example: app.name
      * @return string       config-data or null
      */
     public function functionConfig($text)
     {
         return Config::get($text);
+    }
+
+    /**
+     * wrapper to phps var_dump - d()
+     * @param  mixed $data data to var_dump()
+     * @return string       var_dumped string
+     */
+    public function functionDump($data)
+    {
+        ob_start();
+        var_dump($data);
+        $result = ob_get_clean();
+
+        return $result;
     }
 
     /**

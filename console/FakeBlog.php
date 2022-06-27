@@ -1,8 +1,8 @@
 <?php namespace Xitara\Nexus\Console;
 
 use Illuminate\Console\Command;
-use RainLab\Blog\Models\Category;
-use RainLab\Blog\Models\Post;
+use Winter\Blog\Models\Category;
+use Winter\Blog\Models\Post;
 use Str;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -18,7 +18,7 @@ class FakeBlog extends Command
     /**
      * @var string The console command description.
      */
-    protected $description = 'Generate fake content for RainLab:Blog plugin for testing';
+    protected $description = 'Generate fake content for Winter:Blog plugin for testing';
 
     /**
      * Execute the console command.

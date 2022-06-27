@@ -19,7 +19,13 @@ if (!function_exists('plugins_url')) {
 if (!function_exists('array_search_value')) {
     function array_search_value(array $array, String $search, String $key)
     {
-        return array_search($search, array_column($array, $key));
+        $_key = array_search($search, array_column($array, $key));
+
+        if ($_key === false) {
+            return null;
+        }
+
+        return ['__key' => $_key] + $array[$_key];
     }
 }
 
