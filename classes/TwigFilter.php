@@ -10,7 +10,6 @@ use Html;
 use League\Flysystem\FileNotFoundException;
 use Storage;
 use Winter\Storm\Parse\Bracket;
-use Winter\User\Models\User;
 use Xitara\Nexus\Plugin as Nexus;
 
 /**
@@ -38,6 +37,7 @@ class TwigFilter
                 'storage'       => [$this, 'filterStoragePath'],
                 'plugin'        => [$this, 'filterPluginsPath'],
                 'fa'            => [$this, 'filterFontAwesome'],
+                'backtrans'     => [$this, 'filterTranslate'],
             ],
             'functions' => [
                 'uid'    => [$this, 'functionGenerateUid'],
@@ -572,5 +572,20 @@ class TwigFilter
         $pluginsPath = str_replace(base_path() . '/', '', plugins_path());
 
         return $pluginsPath . '/' . $string;
+    }
+    /**
+     * |backtrans - translate from backend locales
+     *
+     * @autor   mburghammer
+     * @date    2022-06-15T12:33:30+02:00
+     * @version 0.0.1
+     * @since   0.0.1
+     *
+     * @param  string $string string to translate
+     * @return string         $string translated string
+     */
+    public function filterTranslate($string)
+    {
+        return e(trans($string));
     }
 }
