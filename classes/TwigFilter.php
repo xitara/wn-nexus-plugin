@@ -8,7 +8,9 @@ use Config;
 use File;
 use Html;
 use League\Flysystem\FileNotFoundException;
+use Sabberworm\CSS\Parser as CssParser;
 use Storage;
+use System\Classes\ImageResizer;
 use Winter\Storm\Parse\Bracket;
 use Xitara\Nexus\Plugin as Nexus;
 
@@ -21,28 +23,32 @@ class TwigFilter
     {
         return [
             'filters'   => [
-                'phone_link'    => [$this, 'filterPhoneLink'],
+                'backenduser'   => [$this, 'filterBackendUser'],
+                'backtrans'     => [$this, 'filterTranslate'],
+                'css_var'       => [$this, 'filterCssVars'],
                 'email_link'    => [$this, 'filterEmailLink'],
-                'mediadata'     => [$this, 'filterMediaData'],
+                'fa'            => [$this, 'filterFontAwesome'],
                 'filesize'      => [$this, 'filterFileSize'],
+                'frontenduser'  => [$this, 'filterFrontendUser'],
+                'image_text'    => [$this, 'filterAddImageText'],
+                'inject'        => [$this, 'filterInject'],
+                'localize'      => [$this, 'filterLocalize'],
+                'mediadata'     => [$this, 'filterMediaData'],
+                'parentlink'    => [$this, 'filterParentLink'],
+                'phone_link'    => [$this, 'filterPhoneLink'],
+                'plugin'        => [$this, 'filterPluginsPath'],
                 'regex_replace' => [$this, 'filterRegexReplace'],
+                'scrset'        => [$this, 'filterScrset'],
                 'slug'          => [$this, 'filterSlug'],
+                'storage'       => [$this, 'filterStoragePath'],
                 'strip_html'    => [$this, 'filterStripHtml'],
                 'truncate_html' => [$this, 'filterTruncateHtml'],
-                'inject'        => [$this, 'filterInject'],
-                'image_text'    => [$this, 'filterAddImageText'],
-                'parentlink'    => [$this, 'filterParentLink'],
-                'localize'      => [$this, 'filterLocalize'],
-                'css_var'       => [$this, 'filterCssVars'],
-                'storage'       => [$this, 'filterStoragePath'],
-                'plugin'        => [$this, 'filterPluginsPath'],
-                'fa'            => [$this, 'filterFontAwesome'],
-                'backtrans'     => [$this, 'filterTranslate'],
+                'unique'        => [$this, 'filterUnique'],
             ],
             'functions' => [
-                'uid'    => [$this, 'functionGenerateUid'],
                 'config' => [$this, 'functionConfig'],
-                'd' => [$this, 'functionDump'],
+                'd'      => [$this, 'functionDump'],
+                'uid'    => [$this, 'functionGenerateUid'],
             ],
         ];
     }
@@ -54,13 +60,8 @@ class TwigFilter
      *     'classes': 'class1 class2 classN',
      *     'text_before': '<strong>sample</strong>',
      *     'text_after': '<strong>sample</strong>',
-     *     'hide_mail': true|false (hide mail-address in text or not)
+     *     'hide_number': true|false (hide number in text or not)
      * }
-     *
-     * example:
-     * <img src="{{ store.image.getPath() }}"{{ store.image|image_text({
-     *     default: {title: store.name}
-     * }) }}>
      *
      * @param  string $text    text from twig
      * @param  array $options options from twig
@@ -301,29 +302,101 @@ class TwigFilter
 
     /**
      * inject filecontent directly inside html. useful for svg or so - |inject
+     *
+     * options: {
+     *     'first': 'title|description', // outputs title or description as default. default: title
+     *     'alt': true|false, // show alt-attribute, default: true
+     *     'title': true|false, // show title-attribute, default: false
+     *     'classes': 'class-1 class-2 class-n', // optional. classes for image-tag. will ignored in SVG
+     *     'default': { // optional. will be used if image has no title and description
+     *         title: 'Foo',
+     *         description: 'Bar',
+     *     }
+     * }
+     *
+     * @todo fix system for theme and plugin
      * @param  string $path filename relative to project root
      * @param  string $base theme, media or plugin
      * @return string       content of file
      */
-    public function filterInject($path, $base = null): string
+    public function filterInject($file, $base = null, $options = []): string
     {
+        /**
+         * fix for backward compatibility
+         */
+        if (is_array($base)) {
+            $options = $base;
+            $base    = null;
+        }
+
+        if (substr($file, 0, 1) == '/') {
+            $file = substr($file, 1);
+        }
+
+        /**
+         * only for backward compatibility
+         * @depricated
+         */
         switch ($base) {
             case 'theme':
-                $theme       = Theme::getActiveTheme();
-                $fileContent = File::get($theme->getDirName() . '/' . $path);
+                $theme = Theme::getActiveTheme();
+                $file  = $theme->getDirName() . '/' . $file;
+                $file  = \Config::get('cms.themesPath') . '/' . $file;
                 break;
             case 'media':
-                $fileContent = File::get(base_path(media_path($path)));
+                $file = base_path(\Config::get('cms.storage.media.path') . '/' . $file);
                 break;
             case 'plugin':
-                $fileContent = File::get(plugins_path($path));
+                $file = \Config::get('cms.pluginsPath') . '/' . $file;
                 break;
             default:
-                $fileContent = File::get(base_path($path));
+                $file = base_path($file);
                 break;
         }
 
+        if (strpos($file, '://')) {
+            $file = str_replace(url(''), '', $file);
+        }
+
+        if (!File::exists($file)) {
+            return '';
+        }
+
+        if (strpos(mime_content_type($file), 'svg') === false) {
+            $alt = $title = null;
+
+            /**
+             * generate alt, display as default -> alt: false
+             */
+            if ($options['alt'] ?? true === true) {
+                $alt = $this->checkImageText($file, $options, 'alt');
+            }
+
+            /**
+             * generate title, display as option -> title: true
+             */
+            if ($options['title'] ?? false === true) {
+                $title = $this->checkImageText($file, $options, 'title');
+            }
+
+            /**
+             * add classes if given
+             */
+            $classes = '';
+            if ($options['classes'] ?? false === true) {
+                $classes = ' class="' . $options['classes'] . '"';
+            }
+
+            $file = str_replace(base_path(), '', $file);
+
+            return '<img src="' . url($file) . '"' . $alt . $title . $classes . '>';
+        }
+
+        $fileContent = File::get($file);
+        $fileContent = preg_replace('/<!--(.|\s)*?\-->/', '', $fileContent);
         $fileContent = preg_replace('/<\?xml(.|\s)*?\?>/', '', $fileContent);
+        $fileContent = str_replace(["\r", "\n"], '', $fileContent);
+        $fileContent = preg_replace('/\s+/', ' ', $fileContent);
 
         return $fileContent;
     }
@@ -405,7 +478,11 @@ class TwigFilter
      */
     private function checkImageText($image, $options, $art)
     {
-        $text = $options['default']['description'] ?? '';
+        $text = $options[$art] ?? '';
+
+        if ($text == '') {
+            $text = $options['default']['description'] ?? '';
+        }
 
         if (isset($image->description) && $image->description != '') {
             $text = Html::strip($image->description);
@@ -415,8 +492,7 @@ class TwigFilter
             $text = $options['default']['title'] ?? '';
         }
 
-        if (
-            isset($image->title)
+        if (isset($image->title)
             && $image->title !== null
             && $image->title != ''
             && ($text == '' || ($options['first'] ?? 'title') == 'title')
@@ -525,13 +601,17 @@ class TwigFilter
         $mediaUrl = str_replace(base_path() . '/', '', storage_path('app/media'));
 
         $string = Bracket::parse($string, [
-            'theme'  => Config::get('app.url') . Config::get('cms.themesPath') . '/' . $theme->getDirName(),
-            'media'  => Config::get('app.url') . '/' . $mediaUrl,
-            'plugin' => Config::get('app.url') . Config::get('cms.pluginsPath'),
+            'theme'  => url($theme->getDirName()),
+            'media'  => url($mediaUrl),
+            'plugin' => url(Config::get('cms.pluginsPath')),
         ]);
 
-        if (starts_with($string, 'http') !== false) {
-            $string = 'url(' . $string . ')';
+        if (is_numeric($string)) {
+            return $string;
+        } elseif (starts_with($string, 'http') === false) {
+            return '"' . $string . '"';
+        } else {
+            return 'url(' . $string . ')';
         }
 
         return $string;
@@ -573,6 +653,7 @@ class TwigFilter
 
         return $pluginsPath . '/' . $string;
     }
+
     /**
      * |backtrans - translate from backend locales
      *
@@ -587,5 +668,190 @@ class TwigFilter
     public function filterTranslate($string)
     {
         return e(trans($string));
+    }
+
+    /**
+     * |srcset - generates image with scrset
+     * if exists, bootstrap grid breakpoints will used
+     *
+     * @autor   mburghammer
+     * @date    2022-07-14T15:27:16+02:00
+     * @version 0.0.1
+     * @since   0.0.1
+     *
+     * example:
+     * {{ this.theme.default_header_image|media|scrset({
+     *     xs: '30rem',
+     *     sm: '40rem',
+     *     md: '50rem',
+     *     lg: '60rem',
+     *     xl: '70rem',
+     *     xxl: '80rem'
+     * }, {
+     *     'alt': 'alt-text',
+     *     'title': 'title-text'
+     * }, 'png', 70) }}
+     *
+     * @param  string $image relative image path
+     * @param  array $sizes list with sizes (key is similar to breakpoint)
+     * @param  array $text alt/title. use this as keys
+     * @param  string $ext extension to convert image
+     * @param  string $quality quality after resizing
+     * @param  array $options see https://wintercms.com/docs/services/image-resizing#usage for details
+     * @return string         $image translated string
+     */
+    public function filterScrset($image, $sizes, $text = null, $ext = null, $quality = 90, $options = null)
+    {
+        $theme = Theme::getActiveTheme();
+
+        /**
+         * remove trailing slash if exist
+         */
+        if (substr($image, 0, 1) == '/') {
+            $image = substr($image, 1);
+        }
+
+        /**
+         * if not found image return emtpy string
+         */
+        if (!File::exists(base_path($image))) {
+            \Log::error('image ' . $image . ' not found');
+            return '';
+        }
+
+        if (!File::exists(themes_path($theme->getDirName() . '/assets/css/breakpoints.css'))) {
+            \Log::error('breakpoints.css not found in ' . themes_path($theme->getDirName()));
+            return '';
+        }
+
+        $cssFile = File::get(themes_path($theme->getDirName() . '/assets/css/breakpoints.css'));
+
+        /**
+         * parse breakpoint-css and generate bp list
+         */
+        $css = (new CssParser($cssFile))->parse();
+
+        /**
+         * init vars
+         */
+        $scrList   = [];
+        $scrset    = [];
+        $sizesList = [];
+
+        foreach ($css->getContents() as $content) {
+            $scrList[str_replace('.', '', $content->getSelectors()[0]->getSelector())] = [
+                'value' => $content->getRules('width')[0]->getValue()->getSize(),
+                'unit'  => $content->getRules('width')[0]->getValue()->getUnit(),
+            ];
+        }
+
+        foreach ($scrList as $selector => $rule) {
+            if ($rule['unit'] == 'rem' || $rule['unit'] == 'em') {
+                // convert to pixel with default em (16px)
+                $rule['value'] = $rule['value'] * 16;
+
+            }
+
+            $width = (int) $sizes[$selector];
+            $unit  = str_replace($width, '', $sizes[$selector]);
+
+            if ($unit == 'rem' || $unit == 'em') {
+                // convert to pixel with default em (16px)
+                $width *= 16;
+            }
+
+            /**
+             * resize image
+             */
+            $resized = ImageResizer::filterGetUrl(url($image), $width, null, [
+                'extension' => $ext,
+                'quality'   => $quality,
+                'filters'   => $options,
+            ]);
+
+            // min is 1
+            if ($rule['value'] == 0) {
+                $scrset[]   = url($resized) . ' 1w';
+                $ruleBefore = 0;
+                continue;
+            }
+
+            $scrset[]    = url($resized) . ' ' . $rule['value'] . 'w';
+            $sizesList[] = '(min-width: ' . $ruleBefore . $rule['unit'] .
+                ') and (max-width: ' . ($rule['value'] - 1) . $rule['unit'] . ') ' .
+                $sizes[$selector];
+
+            $ruleBefore = $rule['value'];
+        }
+
+        $alt = $title = null;
+
+        /**
+         * generate alt, display as default -> alt: false
+         */
+        if ($text['alt'] ?? '' != '') {
+            $alt = $this->checkImageText($image, $text, 'alt');
+        }
+
+        /**
+         * generate title, display as option -> title: true
+         */
+        if ($text['title'] ?? '' != '') {
+            $title = $this->checkImageText($image, $text, 'title');
+        }
+
+        $img = '<img ';
+        $img .= 'src="' . url($image) . '" ';
+        $img .= $alt . $title . ' ';
+        $img .= 'srcset="' . join(',', $scrset) . '" ';
+        $img .= 'sizes="' . join(',', $sizesList) . '">';
+
+        return $img;
+    }
+
+    /**
+     * get frontend user name from id
+     * @param  interger $userId backend user-id
+     * @return string         first name and last name or id if winter:user is not installed/active
+     */
+    public function filterFrontendUser($userId)
+    {
+        if (PluginManager::instance()->exists('Winter\User') === true) {
+            $user = \Winter\User\Models\User::find($userId);
+            return $user->first_name . ' ' . $user->last_name;
+        }
+
+        return $userId;
+    }
+
+    /**
+     * get backend user name from id
+     * @param  interger $userId backend user-id
+     * @return string         first name and last name
+     */
+    public function filterBackendUser($userId)
+    {
+        $user = BackendUser::find($userId);
+        return $user->first_name . ' ' . $user->last_name;
+    }
+
+    /**
+     * |unique - drop duplicate entries from array
+     *
+     * @autor   mburghammer
+     * @date    2022-05-19T13:11:09+02:00
+     * @version 0.0.1
+     * @since   0.0.1
+     *
+     * @param  array $array array to parse
+     * @return  array      array with unique entries
+     */
+    public function filterUnique($array)
+    {
+        $array = array_unique($array);
+        $array = array_values($array);
+        sort($array);
+
+        return $array;
     }
 }
