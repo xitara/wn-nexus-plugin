@@ -712,6 +712,13 @@ class TwigFilter
         }
 
         /**
+         * remove url from file
+         */
+        if (strpos($image, '://')) {
+            $image = str_replace(url(''), '', $image);
+        }
+
+        /**
          * if not found image return emtpy string
          */
         if (!File::exists(base_path($image))) {
