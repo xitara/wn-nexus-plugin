@@ -176,9 +176,9 @@ class Plugin extends PluginBase
         Users::extend(function ($controller) {
             // $controller->listConfig          = $controller->makeConfig($controller->listConfig);
             // $controller->listConfig->toolbar =
-                // array_merge($controller->listConfig->toolbar, [
-                    // 'buttons' => '$/xitara/nexus/partials/toolbar.users.htm'
-                // ]);
+            // array_merge($controller->listConfig->toolbar, [
+            // 'buttons' => '$/xitara/nexus/partials/toolbar.users.htm'
+            // ]);
 
             /**
              * soft delete user account
@@ -491,11 +491,9 @@ class Plugin extends PluginBase
 
     public function registerComponents()
     {
-        // if (NexusSettings::get('is_twig_filters')) {
         return [
             'Xitara\Nexus\Components\FontAwsome' => 'fontAwsome',
         ];
-        // }
     }
 
     public function registerMarkupTags()
