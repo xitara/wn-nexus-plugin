@@ -16,6 +16,6 @@ return [
     ],
     'default_sprite' => [
         'label'       => 'Default-Font',
-        'description' => 'Auswählen, welcher der obigen Fonst als Standard benutzt wird. ACHTUNG!! Dieser Font wird automatisch eingebunden, auch wenn er oben nicht aktiviert ist.',
+        'description' => 'Auswählen, welcher der obigen Font als Standard benutzt wird. ACHTUNG!! Dieser Font wird automatisch eingebunden, auch wenn er oben nicht aktiviert ist.',
     ],
 ];

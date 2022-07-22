@@ -3,6 +3,8 @@
 namespace Xitara\Nexus\Classes;
 
 use Carbon\Carbon;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 use Cms\Classes\Theme;
 use Config;
 use File;
@@ -44,6 +46,7 @@ class TwigFilter
                 'strip_html'    => [$this, 'filterStripHtml'],
                 'truncate_html' => [$this, 'filterTruncateHtml'],
                 'unique'        => [$this, 'filterUnique'],
+                'qrcode'        => [$this, 'filterQrCode'],
             ],
             'functions' => [
                 'config' => [$this, 'functionConfig'],
@@ -561,6 +564,7 @@ class TwigFilter
 
         return $time->toDateTimeString();
     }
+
     /**
      * fa() - generates full path to fa-sprites
      *
@@ -860,5 +864,31 @@ class TwigFilter
         sort($array);
 
         return $array;
+    }
+
+    /**
+     * |qrcode - generate qrcode from string
+     *
+     * @autor   mburghammer
+     * @date    2022-07-22T07:58:18+02:00
+     * @version 0.0.1
+     * @since   0.0.1
+     *
+     * @param  string $string string to generate qrcode from
+     * @return  string      image-tag with qrcode-image
+     */
+    public function filterQrCode(String $string): String
+    {
+        $options = new QROptions([
+            'version'     => 5,
+            'outputType'  => QRCode::OUTPUT_MARKUP_SVG,
+            'eccLevel'    => QRCode::ECC_L,
+            'imageBase64' => false,
+        ]);
+
+        $qrcode = new QRCode($options);
+
+        return $qrcode->render($string);
+        // return '<img class="qrcode" src="' . $qrcode->render($string) . '" alt="QR Code" />';
     }
 }
