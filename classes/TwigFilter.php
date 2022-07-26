@@ -875,15 +875,16 @@ class TwigFilter
      * @since   0.0.1
      *
      * @param  string $string string to generate qrcode from
-     * @return  string      image-tag with qrcode-image
+     * @return  string      svg with qrcode-image
      */
     public function filterQrCode(String $string): String
     {
         $options = new QROptions([
-            'version'     => 5,
-            'outputType'  => QRCode::OUTPUT_MARKUP_SVG,
-            'eccLevel'    => QRCode::ECC_L,
-            'imageBase64' => false,
+            'version'      => 5,
+            'outputType'   => QRCode::OUTPUT_MARKUP_SVG,
+            'eccLevel'     => QRCode::ECC_L,
+            'imageBase64'  => false,
+            'addQuietzone' => false,
         ]);
 
         $qrcode = new QRCode($options);
