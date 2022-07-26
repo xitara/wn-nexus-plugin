@@ -9,9 +9,9 @@ use Cms\Classes\Theme;
 use Config;
 use File;
 use Html;
+use Storage;
 use League\Flysystem\FileNotFoundException;
 use Sabberworm\CSS\Parser as CssParser;
-use Storage;
 use System\Classes\ImageResizer;
 use Winter\Storm\Parse\Bracket;
 use Xitara\Nexus\Plugin as Nexus;
@@ -184,11 +184,11 @@ class TwigFilter
      * file should be in storage/app/[path], where path-default is "media"
      * for the media-manager
      *
-     * @param  string $media filename
+     * @param  string $file filename
      * @param  string $path  relativ path in storage/app
      * @return array|boolean        filedata or false if file not exists
      */
-    public function filterMediaData($media, $path = 'media'): array
+    public function filterMediaData($file = null): array
     {
         $empty = [
             'size'      => 0,
@@ -197,42 +197,34 @@ class TwigFilter
             'art'       => 'none',
         ];
 
-        // if ($media === null || !isset($media[0])) {
-        if ($media === null || $media == '') {
+        if ($file === null || $file == '') {
             return $empty;
         }
 
-        // return [Storage::getMimetype($path . $media)];
+        if (substr($file, 0, 1) == '/') {
+            $file = base_path(substr($file, 1));
+        }
 
-        // Log::debug($media[0]);
-        // Log::debug($path);
-
-        try {
-            if ($media[0] != '/') {
-                $media = '/' . $media;
-            }
-            // Log::debug($media);
-            // \Log::debug(Storage::getMimetype($path . $media));
-
-            if (strpos(Storage::getMimetype($path . $media), '/')) {
-                list($type, $art) = explode('/', Storage::getMimetype($path . $media));
-            }
-
-            if (($art ?? null) == 'svg+xml') {
-                $art = 'svg';
-            }
-
-            $data = [
-                'size'      => Storage::size($path . $media),
-                'mime_type' => Storage::getMimetype($path . $media),
-                'type'      => $type ?? null,
-                'art'       => $art ?? null,
-            ];
-
-            return $data;
-        } catch (FileNotFoundException $e) {
+        if (!File::exists($file) || File::isDirectory($file)) {
             return $empty;
         }
+
+        if (strpos(File::mimeType($file), '/')) {
+            list($type, $art) = explode('/', File::mimeType($file));
+        }
+
+        if (($art ?? null) == 'svg+xml') {
+            $art = 'svg';
+        }
+
+        $data = [
+            'size'      => File::size($file),
+            'mime_type' => File::mimeType($file),
+            'type'      => $type ?? null,
+            'art'       => $art ?? null,
+        ];
+
+        return $data;
     }
 
     /**
@@ -760,7 +752,6 @@ class TwigFilter
             if ($rule['unit'] == 'rem' || $rule['unit'] == 'em') {
                 // convert to pixel with default em (16px)
                 $rule['value'] = $rule['value'] * 16;
-
             }
 
             $width = (int) $sizes[$selector];
@@ -877,7 +868,7 @@ class TwigFilter
      * @param  string $string string to generate qrcode from
      * @return  string      svg with qrcode-image
      */
-    public function filterQrCode(String $string): String
+    public function filterQrCode(string $string): string
     {
         $options = new QROptions([
             'version'      => 5,
