@@ -492,7 +492,8 @@ class Plugin extends PluginBase
     public function registerComponents()
     {
         return [
-            'Xitara\Nexus\Components\FontAwsome' => 'fontAwsome',
+            'Xitara\Nexus\Components\FontAwsome'        => 'fontAwsome',
+            'Xitara\Nexus\Components\ProgressiveWebApp' => 'progressiveWebApp',
         ];
     }
 
