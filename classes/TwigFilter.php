@@ -9,9 +9,8 @@ use Cms\Classes\Theme;
 use Config;
 use File;
 use Html;
-use Storage;
-use League\Flysystem\FileNotFoundException;
 use Sabberworm\CSS\Parser as CssParser;
+use Storage;
 use System\Classes\ImageResizer;
 use Winter\Storm\Parse\Bracket;
 use Xitara\Nexus\Plugin as Nexus;
@@ -737,24 +736,24 @@ class TwigFilter
         /**
          * init vars
          */
-        $scrList   = [];
+        $srcList   = [];
         $scrset    = [];
         $sizesList = [];
 
         foreach ($css->getContents() as $content) {
-            $scrList[str_replace('.', '', $content->getSelectors()[0]->getSelector())] = [
+            $srcList[str_replace('.', '', $content->getSelectors()[0]->getSelector())] = [
                 'value' => $content->getRules('width')[0]->getValue()->getSize(),
                 'unit'  => $content->getRules('width')[0]->getValue()->getUnit(),
             ];
         }
 
-        foreach ($scrList as $selector => $rule) {
+        foreach ($srcList as $selector => $rule) {
             if ($rule['unit'] == 'rem' || $rule['unit'] == 'em') {
                 // convert to pixel with default em (16px)
                 $rule['value'] = $rule['value'] * 16;
             }
 
-            $width = (int) $sizes[$selector];
+            $width = preg_replace('/[A-Za-z]/', '', $sizes[$selector]);
             $unit  = str_replace($width, '', $sizes[$selector]);
 
             if ($unit == 'rem' || $unit == 'em') {
