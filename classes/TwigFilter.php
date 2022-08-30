@@ -667,7 +667,9 @@ class TwigFilter
 
     /**
      * |srcset - generates image with scrset
-     * if exists, bootstrap grid breakpoints will used
+     * if exists, bootstrap grid breakpoints will used. css.classes must defined like
+     * .breakpoint.xxl
+     * default -> image if no breakpoint is used
      *
      * @autor   mburghammer
      * @date    2022-07-14T15:27:16+02:00
@@ -676,12 +678,13 @@ class TwigFilter
      *
      * example:
      * {{ this.theme.default_header_image|media|scrset({
-     *     xs: '30rem',
-     *     sm: '40rem',
-     *     md: '50rem',
-     *     lg: '60rem',
-     *     xl: '70rem',
+     *     default: '90rem',
      *     xxl: '80rem'
+     *     xl: '70rem',
+     *     lg: '60rem',
+     *     md: '50rem',
+     *     sm: '40rem',
+     *     xs: '30rem',
      * }, {
      *     'alt': 'alt-text',
      *     'title': 'title-text'
@@ -695,9 +698,20 @@ class TwigFilter
      * @param  array $options see https://wintercms.com/docs/services/image-resizing#usage for details
      * @return string         $image translated string
      */
-    public function filterScrset($image, $sizes, $text = null, $ext = null, $quality = 90, $options = null)
+    public function filterScrset($image, $sizes, $text = null, $ext = null, $quality = null, $options = null, $attributes = null)
     {
         $theme = Theme::getActiveTheme();
+
+        /**
+         * set defaults
+         */
+        if ($ext === null) {
+            $ext = 'png';
+        }
+
+        if ($quality === null) {
+            $quality = 90;
+        }
 
         /**
          * remove trailing slash if exist
@@ -736,12 +750,24 @@ class TwigFilter
         /**
          * init vars
          */
-        $srcList   = [];
-        $scrset    = [];
-        $sizesList = [];
+        $srcList    = [];
+        $scrset     = [];
+        $sizesList  = [];
+        $default    = false;
+        $ruleBefore = 0;
+
+        /**
+         * set default image
+         */
+        if (isset($sizes['default'])) {
+            $srcList['default'] = [
+                'value' => ($width = preg_replace('/[A-Za-z]/', '', $sizes['default'])),
+                'unit'  => str_replace($width, '', $sizes['default']),
+            ];
+        }
 
         foreach ($css->getContents() as $content) {
-            $srcList[str_replace('.', '', $content->getSelectors()[0]->getSelector())] = [
+            $srcList[str_replace('.breakpoint-', '', $content->getSelectors()[0]->getSelector())] = [
                 'value' => $content->getRules('width')[0]->getValue()->getSize(),
                 'unit'  => $content->getRules('width')[0]->getValue()->getUnit(),
             ];
@@ -751,6 +777,10 @@ class TwigFilter
             if ($rule['unit'] == 'rem' || $rule['unit'] == 'em') {
                 // convert to pixel with default em (16px)
                 $rule['value'] = $rule['value'] * 16;
+            }
+
+            if (!isset($sizes[$selector])) {
+                continue;
             }
 
             $width = preg_replace('/[A-Za-z]/', '', $sizes[$selector]);
@@ -764,7 +794,7 @@ class TwigFilter
             /**
              * resize image
              */
-            $resized = ImageResizer::filterGetUrl(url($image), $width, null, [
+            $resized = ImageResizer::filterGetUrl(url($image), $width, false, [
                 'extension' => $ext,
                 'quality'   => $quality,
                 'filters'   => $options,
@@ -777,12 +807,17 @@ class TwigFilter
                 continue;
             }
 
-            $scrset[]    = url($resized) . ' ' . $rule['value'] . 'w';
-            $sizesList[] = '(min-width: ' . $ruleBefore . $rule['unit'] .
-                ') and (max-width: ' . ($rule['value'] - 1) . $rule['unit'] . ') ' .
-                $sizes[$selector];
+            if ($selector == 'default') {
+                $default = $resized;
+                continue;
+            } else {
+                $scrset[]    = url($resized) . ' ' . $rule['value'] . 'w';
+                $sizesList[] = '(min-width: ' . $ruleBefore . $rule['unit'] .
+                    ') and (max-width: ' . ($rule['value']) . $rule['unit'] . ') ' .
+                    $sizes[$selector];
 
-            $ruleBefore = $rule['value'];
+                $ruleBefore = $rule['value'] + 1;
+            }
         }
 
         $alt = $title = null;
@@ -801,11 +836,25 @@ class TwigFilter
             $title = $this->checkImageText($image, $text, 'title');
         }
 
+        /**
+         * add additional attributes
+         */
+        $additionalAttributes = [];
+        if ($attributes !== null) {
+            foreach ($attributes as $attribute => $value) {
+                $additionalAttributes[] = $attribute . '="' . $value . '"';
+            }
+        }
+
+        $attributes = join(' ', $additionalAttributes);
+
         $img = '<img ';
-        $img .= 'src="' . url($image) . '" ';
+        $img .= 'src="' . ($default === false ? url($image) : url($default)) . '" ';
         $img .= $alt . $title . ' ';
         $img .= 'srcset="' . join(',', $scrset) . '" ';
-        $img .= 'sizes="' . join(',', $sizesList) . '">';
+        $img .= 'sizes="' . join(',', $sizesList) . '"';
+        $img .= $attributes;
+        $img .= '>';
 
         return $img;
     }
