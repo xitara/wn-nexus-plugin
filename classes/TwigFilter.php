@@ -299,58 +299,48 @@ class TwigFilter
      * inject filecontent directly inside html. useful for svg or so - |inject
      *
      * options: {
-     *     'first': 'title|description', // outputs title or description as default. default: title
-     *     'alt': true|false, // show alt-attribute, default: true
-     *     'title': true|false, // show title-attribute, default: false
-     *     'classes': 'class-1 class-2 class-n', // optional. classes for image-tag. will ignored in SVG
-     *     'default': { // optional. will be used if image has no title and description
-     *         title: 'Foo',
-     *         description: 'Bar',
+     *     alt: 'foo'    // alt-attribute, optional
+     *     title: 'bar'  // title-attribute, optional
+     *     classes: 'class-1 class-2 class-n', // optional. class-attribute. ignored in SVG
+     *     attributes: {    // additional attribute
+     *         'data-foo': 'false',   // data-foo="false"
+     *         foo: 'bar',            // foo="bar"
+     *         'data-foobar': null,   // data-foobar
+     *         num: 1                 // num="1"
      *     }
      * }
      *
-     * @todo fix system for theme and plugin
      * @param  string $path filename relative to project root
-     * @param  string $base theme, media or plugin
+     * @param  array $options optioal options, see above
      * @return string       content of file
      */
-    public function filterInject($file, $base = null, $options = []): string
+    public function filterInject($file, $options = []): string
     {
+        // \Log::debug(__METHOD__);
+        // \Log::debug($file);
+
         /**
          * fix for backward compatibility
          */
-        if (is_array($base)) {
-            $options = $base;
-            $base    = null;
-        }
+        // if (is_array($base)) {
+        //     $options = $base;
+        //     $base    = null;
+        // }
 
+        /**
+         * remove trailing slash if given
+         */
         if (substr($file, 0, 1) == '/') {
             $file = substr($file, 1);
         }
 
         /**
-         * only for backward compatibility
-         * @depricated
+         * if $file is an url, remove domain
          */
-        switch ($base) {
-            case 'theme':
-                $theme = Theme::getActiveTheme();
-                $file  = $theme->getDirName() . '/' . $file;
-                $file  = \Config::get('cms.themesPath') . '/' . $file;
-                break;
-            case 'media':
-                $file = base_path(\Config::get('cms.storage.media.path') . '/' . $file);
-                break;
-            case 'plugin':
-                $file = \Config::get('cms.pluginsPath') . '/' . $file;
-                break;
-            default:
-                $file = base_path($file);
-                break;
-        }
-
         if (strpos($file, '://')) {
-            $file = str_replace(url(''), '', $file);
+            $parts = explode('/', $file, 4);
+            $file = $parts[3] ?? null;
+            unset($parts);
         }
 
         if (!File::exists($file)) {
@@ -358,33 +348,62 @@ class TwigFilter
         }
 
         if (strpos(mime_content_type($file), 'svg') === false) {
-            $alt = $title = null;
+            /**
+             * init title and description
+             */
+            $alt = $title = $classes = $attributes = null;
 
             /**
              * generate alt, display as default -> alt: false
              */
-            if ($options['alt'] ?? true === true) {
-                $alt = $this->checkImageText($file, $options, 'alt');
+            if (trim($options['alt'] ?? '') !== '') {
+                $alt = ' alt="' . $options['alt'] . '"';
             }
 
             /**
              * generate title, display as option -> title: true
              */
-            if ($options['title'] ?? false === true) {
-                $title = $this->checkImageText($file, $options, 'title');
+            if (trim($options['title'] ?? '') !== '') {
+                $title = ' title="' . $options['title'] . '"';
             }
 
             /**
              * add classes if given
              */
-            $classes = '';
-            if ($options['classes'] ?? false === true) {
+            if (trim($options['classes'] ?? '') !== '') {
                 $classes = ' class="' . $options['classes'] . '"';
+            }
+
+            /**
+             * add additional attributes
+             */
+            if (!empty($options['attributes'] ?? [])) {
+                foreach ($options['attributes'] as $attribute => $value) {
+                    $attributes[] = $attribute . (($value !== null) ? '="' . $value . '"' : null);
+                }
+
+                $attributes = join(' ', $attributes);
+            }
+
+            /**
+             * resize image
+             */
+            if (!empty($options['resize'] ?? [])) {
+                $file = ImageResizer::filterGetUrl(
+                    url($file),
+                    $options['resize']['width'],
+                    $options['resize']['height'],
+                    [
+                        'extension' => $options['resize']['ext'] ?? 'png',
+                        'quality'   => $options['resize']['quality'] ?? 90,
+                        'filters'   => $options['resize']['options'] ?? null,
+                    ]
+                );
             }
 
             $file = str_replace(base_path(), '', $file);
 
-            return '<img src="' . url($file) . '"' . $alt . $title . $classes . '>';
+            return '<img src="' . url($file) . '"' . $alt . $title . $classes . $attributes . '>';
         }
 
         $fileContent = File::get($file);
@@ -487,7 +506,8 @@ class TwigFilter
             $text = $options['default']['title'] ?? '';
         }
 
-        if (isset($image->title)
+        if (
+            isset($image->title)
             && $image->title !== null
             && $image->title != ''
             && ($text == '' || ($options['first'] ?? 'title') == 'title')
