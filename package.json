@@ -1,5 +1,5 @@
 {
-    "name": "nexus",
+    "name": "wn-nexus-plugin",
     "version": "2.0.0",
     "description": "Xitara Nexus Plugin for OctoberCMS with sidemenu, custom menus, menu sorting and more",
     "author": "Manuel Burghammer",
@@ -25,9 +25,7 @@
         "check-eslint-config": "eslint-config-prettier .eslint",
         "check-stylelint-config": "stylelint-config-prettier-check",
         "cleanup": "rimraf stats.json* && rimraf manifest.json && rimraf vendor && rimraf yarn*.lo* && rimraf composer.lock && rimraf favicon.ico* && rimraf assets && rimraf theme.yaml* && rimraf version.yaml* && rimraf config && rimraf index.html && rimraf robots.txt && rimraf assets-manifest.json* && rimraf .husky && rimraf node_modules",
-        "start": "webpack-dev-server --open --mode development --progress",
-        "oc-init-theme": "mkdir content && mkdir layouts && mkdir pages && mkdir partials",
-        "oc-kill-theme": "rimraf content && rimraf layouts && rimraf pages && rimraf partials && rimraf static/theme.yaml && rimraf static/config"
+        "start": "webpack-dev-server --open --mode development --progress"
     },
     "devDependencies": {
         "@babel/core": "^7.18.9",
@@ -57,7 +55,6 @@
         "husky": "^8.0.1",
         "lint-staged": "^13.0.3",
         "mini-css-extract-plugin": "^2.6.1",
-        "node-sass": "^7.0.1",
         "normalize.css": "^8.0.1",
         "postcss": "^8.4.14",
         "postcss-flexbugs-fixes": "^5.0.2",
@@ -110,15 +107,12 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^6.1.1",
-        "@tailwindcss/ui": "^0.7.2",
-        "alpinejs": "^3.10.2",
         "glightbox": "^3.2.0",
+        "glob-all": "^3.3.0",
         "mark.js": "^8.11.1",
         "micromodal": "^0.4.10",
+        "sass": "^1.54.8",
         "simplebar": "^5.3.8",
-        "tailwindcss": "^3.1.6",
-        "tailwindcss-plugins": "^0.3.0",
-        "tailwindcss-typography": "^3.1.0",
         "tiny-slider": "^2.9.4"
     }
 }

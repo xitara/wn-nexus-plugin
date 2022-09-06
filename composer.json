@@ -17,10 +17,6 @@
         "sabberworm/php-css-parser": "^8.4",
         "chillerlan/php-qrcode": "^4.3"
     },
-    "scripts": {
-        "post-install-cmd": "yarn",
-        "post-update-cmd": "yarn"
-    },
     "config": {
         "allow-plugins": {
             "composer/installers": true
