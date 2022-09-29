@@ -184,7 +184,6 @@ class TwigFilter
      * for the media-manager
      *
      * @param  string $file filename
-     * @param  string $path  relativ path in storage/app
      * @return array|boolean        filedata or false if file not exists
      */
     public function filterMediaData($file = null): array
