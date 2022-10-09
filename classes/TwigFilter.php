@@ -29,7 +29,7 @@ class TwigFilter
                 'backtrans'     => [$this, 'filterTranslate'],
                 'css_var'       => [$this, 'filterCssVars'],
                 'email_link'    => [$this, 'filterEmailLink'],
-                'fa'            => [$this, 'filterFontAwesome'],
+                // 'fa'            => [$this, 'filterFontAwesome'],
                 'filesize'      => [$this, 'filterFileSize'],
                 'frontenduser'  => [$this, 'filterFrontendUser'],
                 'image_text'    => [$this, 'filterAddImageText'],
@@ -568,14 +568,14 @@ class TwigFilter
      * @param   string      $collection sprite collection like fa-brands or similar
      * @return  string      sprite with full path
      */
-    public function filterFontAwesome($icon, $collection = null)
-    {
-        if ($collection === null) {
-            $collection = \Xitara\Nexus\Components\FontAwsome::getDefaultSprite();
-        }
+    // public function filterFontAwesome($icon, $collection = null)
+    // {
+    //     if ($collection === null) {
+    //         $collection = \Xitara\Nexus\Components\FontAwsome::getDefaultSprite();
+    //     }
 
-        return plugins_url('xitara/nexus/assets/sprites/' . $collection . '.svg#' . $icon);
-    }
+    //     return plugins_url('xitara/nexus/assets/sprites/' . $collection . '.svg#' . $icon);
+    // }
 
     /**
      * |css_var - parse string to math pathes

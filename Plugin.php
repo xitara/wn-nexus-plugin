@@ -489,24 +489,24 @@ class Plugin extends PluginBase
         return $inject;
     }
 
-    public function registerComponents()
-    {
-        return [
-            'Xitara\Nexus\Components\FontAwsome'        => 'fontAwsome',
-            'Xitara\Nexus\Components\ProgressiveWebApp' => 'progressiveWebApp',
-        ];
-    }
+    // public function registerComponents()
+    // {
+    // return [
+    // 'Xitara\Nexus\Components\FontAwsome'        => 'fontAwsome',
+    // 'Xitara\Nexus\Components\ProgressiveWebApp' => 'progressiveWebApp',
+    // ];
+    // }
 
-    public function registerMarkupTags()
-    {
-        if (NexusSettings::get('is_twig_filters')) {
-            return (new TwigFilter())->registerMarkupTags();
-        }
+    // public function registerMarkupTags()
+    // {
+    //     if (NexusSettings::get('is_twig_filters')) {
+    //         return (new TwigFilter())->registerMarkupTags();
+    //     }
 
-        return [
-            'filters' => [[(new TwigFilter()), 'filterFontAwesome']],
-        ];
-    }
+    //     return [
+    //         'filters' => [[(new TwigFilter()), 'filterFontAwesome']],
+    //     ];
+    // }
 
     /**
      * Extend translate plugin

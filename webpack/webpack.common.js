@@ -10,9 +10,9 @@ module.exports = {
     entry: {
         'app': `./js/app.js`,
 
-        'pwa': `./js/pwa.js`,
-        'sw': `./js/sw.js`,
-        'vendor': `./js/vendor.js`,
+        // 'pwa': `./js/pwa.js`,
+        // 'sw': `./js/sw.js`,
+        // 'vendor': `./js/vendor.js`,
 
         'backend': `./js/backend.js`,
         'darkmode': `./scss/darkmode.scss`,
