@@ -29,9 +29,7 @@ class Plugin extends PluginBase
     /**
      * @var array
      */
-    public $require = [
-        'Romanov.ClearCacheWidget',
-    ];
+    public $require = [];
 
     /**
      * Returns information about this plugin.
