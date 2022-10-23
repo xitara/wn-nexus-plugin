@@ -1,6 +1,6 @@
 <?php
 
-use \Winter\Storm\Support\Facades\Config;
+use Winter\Storm\Support\Facades\Config;
 
 Route::get('/xitara/nexus/jsvars.js', function () {
     $urls = [
