@@ -159,13 +159,13 @@ class Plugin extends PluginBase
             /**
              * extend ToughDeveloper.ImageResizer with webp as default extension if installed
              */
-            if (PluginManager::instance()->exists('ToughDeveloper\ImageResizer') === true) {
-                // Log::debug('ToughDeveloper\ImageResizer');
-                if ($widget->model instanceof \ToughDeveloper\ImageResizer\Models\Settings) {
-                    // Log::debug('ToughDeveloper\ImageResizer\Models\Settings');
-                    $widget->tabs['fields']['default_extension']['options']['webp'] = 'webp';
-                }
-            }
+            // if (PluginManager::instance()->exists('ToughDeveloper\ImageResizer') === true) {
+            //     // Log::debug('ToughDeveloper\ImageResizer');
+            //     if ($widget->model instanceof \ToughDeveloper\ImageResizer\Models\Settings) {
+            //         // Log::debug('ToughDeveloper\ImageResizer\Models\Settings');
+            //         $widget->tabs['fields']['default_extension']['options']['webp'] = 'webp';
+            //     }
+            // }
         });
 
         /**
@@ -280,10 +280,10 @@ class Plugin extends PluginBase
                 'tab'   => 'Xitara Nexus',
                 'label' => 'xitara.nexus::permissions.custommenus',
             ],
-            'xitara.nexus.twig_filter' => [
-                'tab'   => 'Xitara Nexus',
-                'label' => 'xitara.nexus::permissions.twig_filter',
-            ],
+            // 'xitara.nexus.twig_filter' => [
+            //     'tab'   => 'Xitara Nexus',
+            //     'label' => 'xitara.nexus::permissions.twig_filter',
+            // ],
         ];
     }
 
@@ -591,6 +591,10 @@ class Plugin extends PluginBase
      */
     public static function slug($title, $separator = '-', $language = null)
     {
+        if ($language === null) {
+            $language = \Session::get('locale');
+        }
+
         if ($language === null) {
             $language = \Config::get('app.locale');
         }
