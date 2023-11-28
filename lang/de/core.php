@@ -3,7 +3,7 @@
 return [
     'plugins'         => [
         'name' => 'Xitara',
-        'home' => 'https://xitara.net',
+        'home' => 'https://xitara.com',
     ],
     'settings'        => [
         'name'     => 'Xitara Nexus',

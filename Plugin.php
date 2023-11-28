@@ -18,7 +18,7 @@ use Redirect;
 use Str;
 use System\Classes\PluginBase;
 use System\Classes\PluginManager;
-use Xitara\Nexus\Classes\TwigFilter;
+// use Xitara\Nexus\Classes\TwigFilter;
 use Xitara\Nexus\Models\CustomMenu;
 use Xitara\Nexus\Models\Menu;
 use Xitara\Nexus\Models\Settings as NexusSettings;
@@ -99,14 +99,11 @@ class Plugin extends PluginBase
 
         Event::listen('backend.page.beforeDisplay', function ($controller, $action, $params) {
             if (NexusSettings::get('is_compact_display')) {
-                $controller->addCss('/plugins/xitara/nexus/assets/css/compact.css');
+                $controller->addCss(Config::get('cms.pluginsPath') . '/xitara/nexus/assets/css/compact.css');
             }
 
-            // $controller->addCss('/plugins/xitara/nexus/assets/css/app.css');
-            // $controller->addCss('/plugins/xitara/nexus/assets/css/darkmode.css');
-
-            $controller->addCss('/plugins/xitara/nexus/assets/css/backend.css');
-            $controller->addJs('/plugins/xitara/nexus/assets/js/backend.js');
+            $controller->addCss(Config::get('cms.pluginsPath') . '/xitara/nexus/assets/css/backend.css');
+            $controller->addJs(Config::get('cms.pluginsPath') . '/xitara/nexus/assets/js/backend.js');
 
             if ($controller instanceof Backend\Controllers\Index) {
                 return Redirect::to('/backend/xitara/nexus/dashboard');
@@ -259,7 +256,7 @@ class Plugin extends PluginBase
      */
     public function registerPermissions()
     {
-        return [
+        $permissions = [
             'xitara.nexus.mainmenu'    => [
                 'tab'   => 'Xitara Nexus',
                 'label' => 'xitara.nexus::permissions.mainmenu',
@@ -285,6 +282,19 @@ class Plugin extends PluginBase
             //     'label' => 'xitara.nexus::permissions.twig_filter',
             // ],
         ];
+
+        $menus = CustomMenu::orderBy('name', 'asc')->get();
+
+        if ($menus !== null) {
+            foreach ($menus as $menu) {
+                $permissions['xitara.nexus.custommenu.' . $menu->slug] = [
+                    'tab'   => 'Xitara Nexus Custom Menus',
+                    'label' => $menu->name,
+                ];
+            }
+        }
+
+        return $permissions;
     }
 
     /**
@@ -324,7 +334,6 @@ class Plugin extends PluginBase
      * $inject contains addidtional menu-items with the following strcture
      *
      * name = [
-     *     group => [string],
      *     label => string|'placeholder', // placeholder only
      *     url => [string], (full backend url)
      *     icon => [string],
@@ -405,12 +414,19 @@ class Plugin extends PluginBase
             $namespace = str_replace('.', '\\', $name) . '\Plugin';
 
             if (method_exists($namespace, 'injectSideMenu')) {
+                // \Log::debug($namespace);
                 $inject = $namespace::injectSideMenu();
+                // \Log::debug($inject);
                 $items  = array_merge($items, $inject);
             }
         }
 
         Event::listen('backend.menu.extendItems', function ($manager) use ($owner, $code, $items) {
+            // \Log::debug($owner);
+            // $owner = 'Xitara.Test';
+
+            // \Log::debug($code);
+            // \Log::debug($items);
             $manager->addSideMenuItems($owner, $code, $items);
         });
     }
@@ -469,8 +485,11 @@ class Plugin extends PluginBase
                         'url'         => $link['link'],
                         'icon'        => $icon ?? null,
                         'iconSvg'     => $iconSvg,
-                        'permissions' => ['submenu.custommenu.' . $custommenu->slug . '.'
-                            . Str::slug($link['text'])],
+                        'permissions' => [
+                            // 'submenu.custommenu.*',
+                            'xitara.nexus.custommenu.' . $custommenu->slug,
+                            // 'submenu.custommenu.' . $custommenu->slug . '.' . Str::slug($link['text']),
+                        ],
                         'attributes'  => [
                             'group'       => 'xitara.custommenulist.' . $custommenu->slug,
                             'groupLabel'  => $custommenu->name,
@@ -486,25 +505,6 @@ class Plugin extends PluginBase
 
         return $inject;
     }
-
-    // public function registerComponents()
-    // {
-    // return [
-    // 'Xitara\Nexus\Components\FontAwsome'        => 'fontAwsome',
-    // 'Xitara\Nexus\Components\ProgressiveWebApp' => 'progressiveWebApp',
-    // ];
-    // }
-
-    // public function registerMarkupTags()
-    // {
-    //     if (NexusSettings::get('is_twig_filters')) {
-    //         return (new TwigFilter())->registerMarkupTags();
-    //     }
-
-    //     return [
-    //         'filters' => [[(new TwigFilter()), 'filterFontAwesome']],
-    //     ];
-    // }
 
     /**
      * Extend translate plugin

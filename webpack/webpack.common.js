@@ -9,20 +9,9 @@ module.exports = {
     context: paths.src,
     entry: {
         'app': `./js/app.js`,
-
-        // 'pwa': `./js/pwa.js`,
-        // 'sw': `./js/sw.js`,
-        // 'vendor': `./js/vendor.js`,
-
         'backend': `./js/backend.js`,
-        // 'darkmode': `./scss/darkmode.scss`,
         'compact': `./scss/compact.scss`,
-
-        // 'fontawesome': `./scss/fa/fontawesome.scss`,
-        // 'brands': `./scss/fa/brands.scss`,
-        // 'solid': `./scss/fa/solid.scss`,
-        // 'regular': `./scss/fa/regular.scss`,
-
+        'exception': `./scss/exception.scss`,
     },
     output: {
         filename: `assets/js/[name].js`,
