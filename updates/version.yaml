@@ -2,7 +2,7 @@
     - First version of XitaraNexus
     - create_menus_table.php
 1.0.2:
-    - Add linklists
+    - Add Custommenus
     - create_custommenus_table.php
 1.0.3: Add submenu level, fakedata-commands, translations
 2.0.0:

@@ -1,10 +1,11 @@
 <?php
+
 return [
     'plugin' => [
         'name' => 'Xitara Nexus',
         'description' => 'Nexus-Plugin für alle Xitara-Plugins, inkl. Backend Seitenmenü',
         'author' => 'Xitara, Manuel Burghammer',
-        'homepage' => 'https://xitara.net',
+        'homepage' => 'https://xitara.com',
     ],
     'submenu' => [
         'label' => 'Xitara Nexus',

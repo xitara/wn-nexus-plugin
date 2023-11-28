@@ -18,3 +18,68 @@
     padding-top: 2.5rem;
     padding-bottom: 2.5rem;
 }
+
+.nexus-top-level {
+    font-size: 1em;
+    background-color: #222;
+    //border: 1px solid green;
+
+    a {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0.5rem 1rem;
+        margin: 0;
+        color: #fff;
+
+        //height: 3rem;
+        align-items: center;
+        //justify-content: flex-start;
+
+        i,
+        img {
+            flex: 0 0 2rem;
+            color: #fff;
+            //width: 2rem;
+            height: 1em;
+            //border: 1px solid green;
+        }
+
+        h4 {
+            flex: 1 0 auto;
+            font-size: 1.5rem;
+            color: #fff;
+            padding: 0;
+            margin: 0;
+            word-wrap: break-word;
+            //border: 1px solid green;
+        }
+
+        div {
+            flex: 1 1 100%;
+            display: none;
+        }
+    }
+
+    h3 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin: 0;
+        padding: 0.75rem 1rem;
+        background-color: #111;
+
+        &::after {
+            content: '+';
+            position: absolute;
+            right: 1rem;
+        }
+    }
+
+    > li {
+        //padding-left: 1rem;
+    }
+
+    ul {
+        margin-bottom: 0.5rem;
+        //display: none;
+    }
+}
