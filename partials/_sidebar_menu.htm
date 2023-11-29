@@ -75,6 +75,15 @@
                             </span>
                         </a>
                         <?= (isset($item->attributes['bold']) && $item->attributes['bold'] === true) ? '</b>' : null ?>
+                        <?php if ($item->counter > 0) : ?>
+                            <span
+                                class="counter"
+                                title="<?= $item->counterLabel ;?>"
+                                data-menu-id="widgetpool/systems"
+                            >
+                                <?= $item->counter ;?>
+                            </span>
+                        <?php endif; ?>
                     </li>
                 <?php endif; ?>
             <?php endforeach; ?>
