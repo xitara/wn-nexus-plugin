@@ -18,11 +18,11 @@ use Redirect;
 use Str;
 use System\Classes\PluginBase;
 use System\Classes\PluginManager;
-// use Xitara\Nexus\Classes\TwigFilter;
 use Xitara\Nexus\Models\CustomMenu;
 use Xitara\Nexus\Models\Menu;
 use Xitara\Nexus\Models\Settings as NexusSettings;
 use Yaml;
+use Log;
 
 class Plugin extends PluginBase
 {
@@ -152,29 +152,12 @@ class Plugin extends PluginBase
             if ($widget->getController() instanceof Users && $widget->model instanceof User) {
                 $widget->tabs['fields']['role']['options'] = 'getMyRoleOptions';
             }
-
-            /**
-             * extend ToughDeveloper.ImageResizer with webp as default extension if installed
-             */
-            // if (PluginManager::instance()->exists('ToughDeveloper\ImageResizer') === true) {
-            //     // Log::debug('ToughDeveloper\ImageResizer');
-            //     if ($widget->model instanceof \ToughDeveloper\ImageResizer\Models\Settings) {
-            //         // Log::debug('ToughDeveloper\ImageResizer\Models\Settings');
-            //         $widget->tabs['fields']['default_extension']['options']['webp'] = 'webp';
-            //     }
-            // }
         });
 
         /**
          * add new toolbor for disable group and permission tab for non superuser
          */
         Users::extend(function ($controller) {
-            // $controller->listConfig          = $controller->makeConfig($controller->listConfig);
-            // $controller->listConfig->toolbar =
-            // array_merge($controller->listConfig->toolbar, [
-            // 'buttons' => '$/xitara/nexus/partials/toolbar.users.htm'
-            // ]);
-
             /**
              * soft delete user account
              */
@@ -196,7 +179,7 @@ class Plugin extends PluginBase
                 return;
             }
 
-            $list->removeColumn('permissions');
+            // $list->removeColumn('permissions');
             // $list->removeColumn('groups');
         });
 
@@ -208,7 +191,7 @@ class Plugin extends PluginBase
                 return;
             }
 
-            $form->removeField('permissions');
+            // $form->removeField('permissions');
             // $form->removeField('groups');
 
             if (\Request::segment(4) == 'myaccount') {
@@ -277,10 +260,6 @@ class Plugin extends PluginBase
                 'tab'   => 'Xitara Nexus',
                 'label' => 'xitara.nexus::permissions.custommenus',
             ],
-            // 'xitara.nexus.twig_filter' => [
-            //     'tab'   => 'Xitara Nexus',
-            //     'label' => 'xitara.nexus::permissions.twig_filter',
-            // ],
         ];
 
         $menus = CustomMenu::orderBy('name', 'asc')->get();
@@ -414,19 +393,19 @@ class Plugin extends PluginBase
             $namespace = str_replace('.', '\\', $name) . '\Plugin';
 
             if (method_exists($namespace, 'injectSideMenu')) {
-                // \Log::debug($namespace);
-                $inject = $namespace::injectSideMenu();
-                // \Log::debug($inject);
+                $checker = new \ReflectionMethod($namespace, 'injectSideMenu');
+
+                if ($checker->isStatic()) {
+                    $inject = $plugin::injectSideMenu();
+                } else {
+                    $plugin = PluginManager::instance()->findByNamespace($namespace);
+                    $inject = $plugin->injectSideMenu();
+                }
                 $items  = array_merge($items, $inject);
             }
         }
 
         Event::listen('backend.menu.extendItems', function ($manager) use ($owner, $code, $items) {
-            // \Log::debug($owner);
-            // $owner = 'Xitara.Test';
-
-            // \Log::debug($code);
-            // \Log::debug($items);
             $manager->addSideMenuItems($owner, $code, $items);
         });
     }
@@ -486,9 +465,7 @@ class Plugin extends PluginBase
                         'icon'        => $icon ?? null,
                         'iconSvg'     => $iconSvg,
                         'permissions' => [
-                            // 'submenu.custommenu.*',
                             'xitara.nexus.custommenu.' . $custommenu->slug,
-                            // 'submenu.custommenu.' . $custommenu->slug . '.' . Str::slug($link['text']),
                         ],
                         'attributes'  => [
                             'group'       => 'xitara.custommenulist.' . $custommenu->slug,
