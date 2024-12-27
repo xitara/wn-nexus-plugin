@@ -54,7 +54,7 @@ if (PluginManager::instance()->exists('Xitara.Nexus') === true) {
         $namespace = (new \ReflectionObject($controller))->getNamespaceName();
 
         if ($namespace == '[VENDOR]\[PLUGIN]\Controllers') {
-            \Xitara\Nexus\Plugin::getSideMenu('[VENDOR].[PLUGIN]', '[PLUGIN-SLUG]');
+            \Xitara\Nexus\Plugin::getSideMenu('[VENDOR].[PLUGIN]', '[PLUGIN_SLUG]');
         }
     });
 }
@@ -64,10 +64,10 @@ if (PluginManager::instance()->exists('Xitara.Nexus') === true) {
 ```php
 public function register()
 {
-    if (PluginManager::instance()->exists('Xitara.Nexus') === true) {
+    if (PluginManager::instance()->exists('Xitara\Nexus') === true) {
         BackendMenu::registerContextSidenavPartial(
             '[VENDOR].[PLUGIN]',
-            '[PLUGIN-SLUG]',
+            '[PLUGIN_SLUG]',
             '$/xitara/nexus/partials/_sidebar.htm'
         );
     }
@@ -79,18 +79,18 @@ public function register()
 ```php
 public function registerNavigation()
 {
-    $label = '[VENDOR-SLUG].[PLUGIN-SLUG]::lang.plugin.name';
+    $label = '[VENDOR_SLUG].[PLUGIN_SLUG]::lang.plugin.name';
 
     if (PluginManager::instance()->exists('Xitara.Nexus') === true) {
         $label .= '::hidden';
     }
 
     return [
-        '[PLUGIN-SLUG]' => [
+        '[PLUGIN_SLUG]' => [
             'label' => $label,
-            'url' => Backend::url('[VENDOR-SLUG]/[PLUGIN-SLUG]/[CONTROLLER-SLUG]'),
+            'url' => Backend::url('[VENDOR_SLUG]/[PLUGIN_SLUG]/[CONTROLLER_SLUG]'),
             'icon' => 'icon-leaf',
-            'permissions' => ['[VENDOR-SLUG].[PLUGIN-SLUG].*'],
+            'permissions' => ['[VENDOR_SLUG].[PLUGIN_SLUG].*'],
             'order' => 500,
         ],
     ];
@@ -103,16 +103,16 @@ public static function injectSideMenu()
 {
     $i = 0;
     return [
-        '[PLUGIN-SLUG].[CONTROLLER-SLUG]' => [
-            'label' => '[VENDOR-SLUG].[PLUGIN-SLUG]::lang.submenu.[CONTROLLER-SLUG]',
-            'url' => Backend::url('[VENDOR-SLUG]/[PLUGIN-SLUG]/[CONTROLLER-SLUG]'),
+        '[PLUGIN_SLUG].[CONTROLLER_SLUG]' => [
+            'label' => '[VENDOR_SLUG].[PLUGIN_SLUG]::lang.submenu.[CONTROLLER_SLUG]',
+            'url' => Backend::url('[VENDOR_SLUG]/[PLUGIN_SLUG]/[CONTROLLER_SLUG]'),
             'icon' => 'icon-archive',
-            'permissions' => ['[VENDOR-SLUG].[PLUGIN-SLUG].*'],
+            'permissions' => ['[VENDOR_SLUG].[PLUGIN_SLUG].*'],
             'attributes' => [ // can be extendet if you need, no limitations
-                'group' => '[VENDOR-SLUG].[PLUGIN-SLUG]::lang.submenu.label',
+                'group' => '[VENDOR_SLUG].[PLUGIN_SLUG]::lang.submenu.label',
                 'level' => 1, // optional, default is level 0. adds css-class level-X to li
             ],
-            'order' => \Xitara\Nexus\Plugin::getMenuOrder('[VENDOR-SLUG].[PLUGIN-SLUG]') + $i++,
+            'order' => \Xitara\Nexus\Plugin::getMenuOrder('[VENDOR_SLUG].[PLUGIN_SLUG]') + $i++,
         ],
         ...
     ];
@@ -124,14 +124,14 @@ public static function injectSideMenu()
 public function __construct()
 {
     parent::__construct();
-    BackendMenu::setContext('[VENDOR].[PLUGIN]', '[PLUGIN-SLUG]', 'nexus.[CONTROLLER-SLUG]');
+    BackendMenu::setContext('[VENDOR].[PLUGIN]', '[PLUGIN_SLUG]', 'nexus.[CONTROLLER_SLUG]');
 }
 ```
 
 ## Translation
 
-- `[VENDOR-SLUG].[PLUGIN-SLUG]::lang.submenu.label` is the heading of your menu items
-- `[VENDOR-SLUG].[PLUGIN-SLUG]::lang.submenu.[CONTROLLER]` is the your menu item
+- `[VENDOR_SLUG].[PLUGIN_SLUG]::lang.submenu.label` is the heading of your menu items
+- `[VENDOR_SLUG].[PLUGIN_SLUG]::lang.submenu.[CONTROLLER]` is the your menu item
 
 ## Register backend settings
 ### You must implement your own settings model in your plugin
@@ -140,7 +140,7 @@ Register settings to Nexus category
 ```php
 public function registerSettings()
 {
-    $category = '[VENDOR-SLUG].[PLUGIN-SLUG]::lang.settings.label';
+    $category = '[VENDOR_SLUG].[PLUGIN_SLUG]::lang.settings.label';
     
     if (PluginManager::instance()->exists('Xitara.Nexus') === true) {
         if (($category = \Xitara\Nexus\Models\Settings::get('menu_text')) == '') {
