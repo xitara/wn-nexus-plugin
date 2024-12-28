@@ -1,4 +1,4 @@
-# Xitara Nexus Plugin [![devDependency Status](https://david-dm.org/xitara/oc-plugin-nexus/dev-status.svg)](https://david-dm.org/xitara/oc-plugin-nexus/?type=dev) [![Known Vulnerabilities](https://snyk.io/test/github/xitara/oc-plugin-nexus/badge.svg)](https://snyk.io//test/github/xitara/oc-plugin-nexus)
+# Xitara Nexus Plugin [![Known Vulnerabilities](https://snyk.io/test/github/xitara/wn-nexus-plugin/badge.svg)](https://snyk.io//test/github/xitara/wn-nexus-plugin)
 
 Implements backend sidemenu, custom menus, menu sorting
 
