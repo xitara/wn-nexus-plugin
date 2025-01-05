@@ -84,8 +84,18 @@
     }
 }
 
-.top-level ul li  {
+.top-level ul li {
     position: relative;
+
+    a:has(img) {
+        display: flex !important;
+        padding-left: 15px !important;
+
+        img {
+            width: 25px;
+            margin-right: 16px;
+        }
+    }
 }
 
 .top-level ul li span.counter {
@@ -96,16 +106,16 @@
     padding: 0.143em 0.429em 0.214em 0.286em;
     background-color: #d9350f;
     color: #fff;
-    font-size: .786em;
+    font-size: 0.786em;
     line-height: 100%;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
     opacity: 1;
     filter: alpha(opacity=100);
-    -webkit-transform: scale(1,);
-    -ms-transform: scale(1,);
-    transform: scale(1,);
+    -webkit-transform: scale(1);
+    -ms-transform: scale(1);
+    transform: scale(1);
     -webkit-transition: all 0.3s;
     transition: all 0.3s;
 }

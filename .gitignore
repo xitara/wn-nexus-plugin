@@ -19,7 +19,8 @@ yarn.lock
 *.br
 *manifest*
 .husky
-post-update.*
+*.code-workspace
+/secure
 
 ### Composer ###
 composer.lock
@@ -27,12 +28,6 @@ composer.phar
 /vendor/
 /config/
 theme.yaml*
-
-# font awsome
-/static/assets/sprites
-/static/assets/svgs
-/static/assets/fonts
-# end font awsome
 
 # Commit your application's lock file https://getcomposer.org/doc/01-basic-usage.md#commit-your-composer-lock-file-to-version-control
 # You may choose to ignore a library lock file http://getcomposer.org/doc/02-libraries.md#lock-file

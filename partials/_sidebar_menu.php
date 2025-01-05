@@ -2,8 +2,8 @@
 <?php
     $sideMenuItems = BackendMenu::listSideMenuItems();
 
-    if ($sideMenuItems):
-        $collapsedGroups = explode('|', isset($_COOKIE['sidenav_tree']) ? $_COOKIE['sidenav_tree'] : null);
+if ($sideMenuItems):
+    $collapsedGroups = explode('|', isset($_COOKIE['sidenav_tree']) ? $_COOKIE['sidenav_tree'] : null);
 
     $categories = [];
     foreach ($sideMenuItems as $sideItemCode => $item) {
@@ -41,12 +41,12 @@
             $categories[$item->group][$sideItemCode] = $item;
         }
     }
-    // exit;
+// exit;
 ?>
     <ul class="top-level">
         <?php foreach ($categories as $category => $items):
             $collapsed = false;
-        ?>
+            ?>
         <li data-group-code="<?= e($category); ?>"
             <?= $collapsed ? 'data-status="collapsed"' : null; ?>
         >
@@ -67,7 +67,7 @@
                             <?php if ($item->iconSvg === null): ?>
                                 <i class="sidebar-menu-item <?= $item->icon; ?>"></i>
                             <?php else: ?>
-                                <img src="<?= $item->iconSvg; ?>" style="width: 25px; margin-left: -30px; float: left">
+                                <img src="<?= $item->iconSvg; ?>">
                             <?php endif; ?>
                             <span class="header"><?= e(trans($item->label)); ?></span>
                             <span class="description">
