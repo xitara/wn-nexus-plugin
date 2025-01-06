@@ -1,4 +1,6 @@
-<?php namespace Xitara\Nexus\Models;
+<?php
+
+namespace Xitara\Nexus\Models;
 
 use Model;
 
@@ -23,7 +25,7 @@ class Menu extends Model
     /**
      * @var array Fillable fields
      */
-    protected $fillable = [];
+    protected $fillable = ['code', 'sort_order'];
 
     /**
      * @var array Validation rules for attributes

@@ -4,7 +4,7 @@
 
 columns:
     name:
-        label: xitara.nexus::lang.custommenu.name
+        label: xitara.nexus::lang.custommenu.name.label
         type: text
         searchable: true
         sortable: true

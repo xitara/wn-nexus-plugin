@@ -1,8 +1,11 @@
-<?php namespace Xitara\Nexus\Models;
+<?php
+
+namespace Xitara\Nexus\Models;
 
 use Model;
 use Str;
 use Xitara\Nexus\Models\Menu;
+use Log;
 
 /**
  * CustomMenu Model

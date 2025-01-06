@@ -26,7 +26,14 @@ return [
     ],
     'custommenu' => [
         'label' => 'Benutzerdefinierte Menüs',
-        'name' => 'Name',
+        'name' => [
+            'label' => 'Name',
+            'comment' => 'Der Name bzw. die Überschrift des Menüs',
+        ],
+        'namespace' => [
+            'label' => 'Namespace',
+            'comment' => 'Der Namespace des Menüs. Wird für die Zuordnung der Menüpunkte und die Übersetzung benötigt. (optional)',
+        ],
         'is_submenu' => 'Im Seitenmenü anzeigen',
         'is_active' => 'Aktiv',
         'links' => 'Links',

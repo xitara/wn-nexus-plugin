@@ -352,7 +352,7 @@ class Plugin extends PluginBase
             $group = 'xitara.nexus::lang.submenu.label';
         }
         // Log::debug($group);
-
+        $i = 0;
         $items = [
             'nexus.dashboard'   => [
                 'label'       => 'xitara.nexus::lang.nexus.dashboard',
@@ -366,6 +366,7 @@ class Plugin extends PluginBase
                 'attributes'  => [
                     'group' => $group,
                 ],
+                'order' => $i++,
             ],
             'nexus.menu'        => [
                 'label'       => 'xitara.nexus::lang.nexus.menu',
@@ -376,6 +377,7 @@ class Plugin extends PluginBase
                 'attributes'  => [
                     'group' => $group,
                 ],
+                'order' => $i++,
             ],
             'nexus.custommenus' => [
                 'label'       => 'xitara.nexus::lang.custommenu.label',
@@ -386,24 +388,35 @@ class Plugin extends PluginBase
                 'attributes'  => [
                     'group' => $group,
                 ],
+                'order' => $i++,
             ],
         ];
 
         foreach (PluginManager::instance()->getPlugins() as $name => $plugin) {
             $namespace = str_replace('.', '\\', $name) . '\Plugin';
+            // var_dump($name);
+            // var_dump(PluginManager::instance()->isDisabled($plugin));
 
             if (method_exists($namespace, 'injectSideMenu')) {
                 $checker = new \ReflectionMethod($namespace, 'injectSideMenu');
+                // $plugin = PluginManager::instance()->findByNamespace($namespace);
 
+                // var_dump($plugin);
+                // var_dump($plugin);
+
+                // if (!$plugin->is_disabled) {
                 if ($checker->isStatic()) {
                     $inject = $plugin::injectSideMenu();
                 } else {
-                    $plugin = PluginManager::instance()->findByNamespace($namespace);
                     $inject = $plugin->injectSideMenu();
                 }
                 $items  = array_merge($items, $inject);
+                // }
             }
         }
+
+        // Log::debug($items);
+        // var_dump($items);
 
         Event::listen('backend.menu.extendItems', function ($manager) use ($owner, $code, $items) {
             $manager->addSideMenuItems($owner, $code, $items);
@@ -419,6 +432,7 @@ class Plugin extends PluginBase
         $item = Menu::find($code);
 
         if ($item === null) {
+            Menu::create(['code' => $code, 'sort_order' => 9999]);
             return 9999;
         }
 
@@ -444,7 +458,19 @@ class Plugin extends PluginBase
         $inject = [];
         foreach ($custommenus as $custommenu) {
             $count = 0;
-            foreach ($custommenu->links as $text => $link) {
+            // Log::debug('-- ' . $custommenu->slug);
+            // Log::debug('>> ' . $custommenu->namespace);
+
+            $namespace = $custommenu->slug . '.custommenulist';
+
+            if ($custommenu->namespace !== null) {
+                $namespace = str_replace('\\', '.', $custommenu->namespace);
+                $namespace = strtolower($namespace);
+            }
+
+            // Log::debug('== ' . $namespace);
+
+            foreach ($custommenu->links as $i => $link) {
                 if ($link['is_active'] == 1) {
                     $icon = $iconSvg = null;
 
@@ -456,29 +482,28 @@ class Plugin extends PluginBase
                         $iconSvg = url(Config::get('cms.storage.media.path') . $link['icon_image']);
                     }
 
-                    // Log::debug($icon);
-                    // Log::debug($iconSvg);
-
-                    $inject['custommenulist.' . $custommenu->slug . '.' . Str::slug($link['text'])] = [
+                    $inject[$namespace . '.' . Str::slug($link['text'])] = [
                         'label'       => $link['text'],
                         'url'         => $link['link'],
                         'icon'        => $icon ?? null,
                         'iconSvg'     => $iconSvg,
                         'permissions' => [
-                            'xitara.nexus.custommenu.' . $custommenu->slug,
+                            $namespace . '.' . $custommenu->slug,
                         ],
                         'attributes'  => [
-                            'group'       => 'xitara.custommenulist.' . $custommenu->slug,
+                            'group'       => $namespace . '.' . $custommenu->slug,
                             'groupLabel'  => $custommenu->name,
                             'target'      => ($link['is_blank'] == 1) ? '_blank' : null,
                             'keywords'    => $link['keywords'] ?? null,
                             'description' => $link['description'] ?? null,
                         ],
-                        'order'       => self::getMenuOrder('xitara.custommenulist.' . $custommenu->slug) + $count++,
+                        'order'       => self::getMenuOrder($namespace . '.' . $custommenu->slug) + $count++,
                     ];
                 }
             }
         }
+
+        // Log::debug($inject);
 
         return $inject;
     }

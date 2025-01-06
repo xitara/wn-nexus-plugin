@@ -1,21 +1,29 @@
 1.0.1:
-    - First version of XitaraNexus
+    - 'First version of XitaraNexus'
     - create_menus_table.php
 1.0.2:
-    - Add Custommenus
+    - 'Add Custommenus'
     - create_custommenus_table.php
-1.0.3: Add submenu level, fakedata-commands, translations
+1.0.3:
+    - 'Add submenu level, fakedata-commands, translations'
 2.0.0:
-    - Switch to new namespave Xitara.Nexus
-    - Add PWA component (not testet yet, not documented)
-    - New menu structure (li-border, cleanup)
+    - 'Switch to new namespave Xitara.Nexus'
+    - 'Add PWA component (not testet yet, not documented)'
+    - 'New menu structure (li-border, cleanup)'
 2.1.0:
-    - Add font awesome free
-    - Cleanup some code
-2.1.1: Add first version of darkmode (static, no switch)
+    - 'Add font awesome free'
+    - 'Cleanup some code'
+2.1.1:
+    - 'Add first version of darkmode (static, no switch)'
 2.1.2:
-    - Add timezone dropdown to translate plugin
+    - 'Add timezone dropdown to translate plugin'
     - extend_winter_locale_with_timezone.php
-2.1.3: Merge oc-version into wn-version
-2.1.4: Full migration to winter-namespace
-2.1.5: Back compatibility to octoberCMS, latest v1
+2.1.3:
+    - 'Merge oc-version into wn-version'
+2.1.4:
+    - 'Full migration to winter-namespace'
+2.1.5:
+    - 'Back compatibility to octoberCMS, latest v1'
+2.1.6:
+    - 'Add namespace field to custommenus'
+    - v2.1.6/add_namespace_field.php

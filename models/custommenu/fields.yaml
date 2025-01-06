@@ -4,9 +4,15 @@
 
 fields:
     name:
-        label: xitara.nexus::lang.custommenu.name
+        label: xitara.nexus::lang.custommenu.name.label
+        comment: xitara.nexus::lang.custommenu.name.comment
         type: text
         span: left
+    namespace:
+        label: xitara.nexus::lang.custommenu.namespace.label
+        comment: xitara.nexus::lang.custommenu.namespace.comment
+        type: text
+        span: right
     is_submenu:
         label: xitara.nexus::lang.custommenu.is_submenu
         type: switch
@@ -56,4 +62,3 @@ fields:
                     span: storm
                     cssClass: col-md-3
                     default: 1
-
